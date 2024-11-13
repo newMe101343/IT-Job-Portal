@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { generateAccessToken, generateRefreshToken } = require("../utils/tokens.js");
 
 const hrSchema = new mongoose.Schema({
     name: {
@@ -47,6 +48,9 @@ const hrSchema = new mongoose.Schema({
             ref: "Job"
         }
     ],
+    refreshToken: {
+        type: String
+    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -56,5 +60,13 @@ const hrSchema = new mongoose.Schema({
         default: Date.now
     }
 });
+
+userSchema.methods.generateAccessToken = function () {
+    return generateAccessToken(this);
+};
+
+userSchema.methods.generateRefreshToken = function () {
+    return generateRefreshToken(this);
+};
 
 module.exports = mongoose.model("HR", hrSchema);

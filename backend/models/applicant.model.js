@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { generateAccessToken, generateRefreshToken } = require("../utils/tokens.js");
 
 const applicantSchema = new mongoose.Schema({
     name: {
@@ -48,6 +49,9 @@ const applicantSchema = new mongoose.Schema({
             }
         }
     ],
+    refreshToken: {
+        type: String
+    },
     isVerified: {
         type: Boolean,
         default: false
@@ -61,5 +65,13 @@ const applicantSchema = new mongoose.Schema({
         default: Date.now
     }
 });
+
+userSchema.methods.generateAccessToken = function () {
+    return generateAccessToken(this);
+};
+
+userSchema.methods.generateRefreshToken = function () {
+    return generateRefreshToken(this);
+};
 
 module.exports = mongoose.model("Applicant", applicantSchema);
