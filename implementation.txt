@@ -116,6 +116,25 @@ FRONT END---
 		 Signed in No ----> SignIN
 
 2) Home (Logged-in) - Navbar
+
+Pages:-
+
+1 Home 
+2 Sign in'
+3 Signup
+4 HR dashboard
+5 Job finder dashboard
+6 Settings
+7 Job applicant Profile Page
+8 HR profile page
+9 Job Listings *******
+10 Coding challenges add skill page
+11 Retest Skills
+12 
+
+
+javascript---> (/skillcheck/[lang])
+
 	  
 	  	
 		
