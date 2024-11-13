@@ -1,0 +1,128 @@
+users - HR
+      - Job finders
+
+Job finders - 
+
+Qualifications/degrees  
+Skills (Verify using online compiler and problem statements)
+Projects and portfolios  // GitHub api , Leetcode api
+Account Verify using free api  //mob no
+English score   /-ML
+GitHub Leetcode
+
+Skill growth factor and personal recommendation
+Auto interview scheduler
+Analytics
+Referals
+Feedback on coding skills and tips to improve
+Skill tiers - pro expert 
+CodeGPT
+Debug this code
+Application under review
+Company feedback via email
+Salary suggestion using ML
+retest - down , up new
+
+ML -
+
+1) English Score rating
+2) Skill index 0 - 10
+3) Salary prediction
+4) Profile analytics and improvement
+
+
+Sign-up - account type 
+
+
+DB STRUCTURE -
+
+1) jOBfINDER
+
+{
+  "_id": ObjectId,
+  "name": String,
+  "email": String,
+  "password": String, // hashed password
+  "profilePicture": String, // URL to profile picture
+  "qualifications": String, // e.g., "B.Tech in Computer Science"
+  "techStack": [String], // Array of skills, e.g., ["JavaScript", "Python"]
+  "Experience": Number ,
+  "projectPortfolio": [
+    {
+      "projectName": String,
+      "projectLink": String,
+      "description": String
+    }
+  ],
+  "isVerified": Boolean, // Whether the applicant has been verified
+  "createdAt": Date,
+  "updatedAt": Date
+}
+
+2) hr
+
+{
+  "_id": ObjectId,
+  "name": String,
+  "email": String,
+  "password": String, // hashed password
+  "profilePicture": String, // URL to profile picture
+  "company": String,
+  "company_category": String,
+  "companyWebsite": String,
+  "jobPostings": [ObjectId], // Array of Job IDs referencing the Jobs collection
+  "createdAt": Date,
+  "updatedAt": Date
+}
+
+3)jobs
+
+{
+  "_id": ObjectId,
+  "title": String,
+  "description": String,
+  "requirements": String, // Qualifications required, e.g., "B.Tech in Computer Science"
+  "techStack": [String], // Required tech skills, e.g., ["JavaScript", "Node.js"]
+  "hrId": ObjectId, // Reference to HR collection for the HR who posted the job
+  "applicants": [ObjectId], // Array of Applicant IDs who have applied
+  "createdAt": Date,
+  "updatedAt": Date
+}
+
+4) applications
+
+{
+  "_id": ObjectId,
+  "jobId": ObjectId, // Reference to Job collection
+  "applicantId": ObjectId, // Reference to Applicant collection
+  "status": { // Status of the application
+    "type": String,
+    "enum": ["pending", "reviewed", "accepted", "rejected"],
+    "default": "pending"
+  },
+  "preInterviewTask": {
+    "codeSubmission": String, // Code submitted for pre-interview task
+    "score": Number // Evaluation score, if applicable
+  },
+  "appliedAt": Date,
+  "updatedAt": Date
+}
+
+
+
+FRONT END---
+
+1) SignIn Page - Signed in yes ---> Home
+		 Signed in No ----> SignIN
+
+2) Home (Logged-in) - Navbar
+	  
+	  	
+		
+
+
+
+
+
+
+
