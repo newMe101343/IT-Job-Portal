@@ -26,7 +26,7 @@ export default function Navbar() {
                             <Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-9 ">About</Link>
                             <Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-9 ">Page2</Link>
                             <Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-9 ">Page3</Link>
-                            {!isLoggedIn && <Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-9 ">Log in</Link>}
+                            {!isLoggedIn && <Link href="/pages/sign-in" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-9 ">Log in</Link>}
                             {isLoggedIn &&<Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-9 ">Log out</Link>}
 
                             <div className="relative mt-4 lg:mt-0 lg:mx-4">

@@ -23,34 +23,40 @@ const applicantSchema = new mongoose.Schema({
         required: true
     },
     profilePicture: {
-        type: String
+        type: String,
+        default: null
     },
     qualifications: {
-        type: String
+        type: String,
+        default: null
     },
     techStack: {
-        type: [String]
+        type: [String],
+        default: null
     },
     experience: {
         type: Number,
-        default: 0
+        default: null
     },
     projectPortfolio: [
         {
             projectName: {
                 type: String,
-                required: true
+                default: null
             },
             projectLink: {
-                type: String
+                type: String,
+                default: null
             },
             description: {
-                type: String
+                type: String,
+                default: null
             }
         }
     ],
     refreshToken: {
-        type: String
+        type: String,
+        default: null
     },
     isVerified: {
         type: Boolean,
@@ -66,11 +72,11 @@ const applicantSchema = new mongoose.Schema({
     }
 });
 
-userSchema.methods.generateAccessToken = function () {
+applicantSchema.methods.generateAccessToken = function () {
     return generateAccessToken(this);
 };
 
-userSchema.methods.generateRefreshToken = function () {
+applicantSchema.methods.generateRefreshToken = function () {
     return generateRefreshToken(this);
 };
 

@@ -77,7 +77,7 @@ export default function SignIn() {
                     </button>
                   </div>
 
-                  <div className="mt-6 mx-auto flex space-x-4">
+                  {/* <div className="mt-6 mx-auto flex space-x-4">
                     <button
                       type="button"
                       className="w-2/5 px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:bg-blue-400 focus:ring focus:ring-blue-300 focus:ring-opacity-50"
@@ -91,7 +91,7 @@ export default function SignIn() {
                     >
                       Sign in
                     </button>
-                  </div>
+                  </div> */}
 
                   
 
@@ -99,7 +99,7 @@ export default function SignIn() {
 
                 </form>
 
-                <p className="mt-6 text-sm text-center text-gray-400">Don’t have an account yet? <Link href="../Pages/SignUp" className="text-blue-500 focus:outline-none focus:underline hover:underline">Sign up</Link></p>
+                <p className="mt-6 text-sm text-center text-gray-400">Don’t have an account yet? <Link href="../pages/register" className="text-blue-500 focus:outline-none focus:underline hover:underline">Sign up</Link></p>
               </div>
             </div>
           </div>
