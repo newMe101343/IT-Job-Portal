@@ -1,4 +1,5 @@
 const HR = require('../models/HR.model');
+const jwt = require('jsonwebtoken');
 const bcryptjs = require('bcryptjs');
 const { generateAccessToken, generateRefreshToken } = require('../utils/tokens');
 
@@ -108,10 +109,49 @@ const signIn = async (req, res) => {
     }
 }
 
+const logout = async (req, res) => {
+    console.log("Logout request hit");
+
+    try {
+        const token = req.cookies?.refreshToken || req.header('Authorization')?.replace('Bearer ', '');
+
+        if (!token) {
+            return res.status(400).json({ message: 'No refresh token provided' });
+        }
+
+        const decodedToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+
+        const user = await HR.findById(decodedToken._id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.refreshToken = null;
+        await user.save();
+
+        const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            path: '/', // Explicit path
+        };
+
+        res.clearCookie('refreshToken', cookieOptions);
+        res.clearCookie('accessToken', cookieOptions);
+
+        return res.status(200).json({ message: 'User logged out successfully' });
+
+    } catch (err) {
+        console.error('Error logging out user:', err);
+        return res.status(500).json({ message: 'Error logging out user' });
+    }
+};
+
 
 
 
 module.exports = {
     registerHR,
     signIn,
+    logout,
 };

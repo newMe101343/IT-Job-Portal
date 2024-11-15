@@ -1,30 +1,27 @@
+const jwt = require('jsonwebtoken');
 const Applicant = require('../models/applicant.model');
 const bcryptjs = require('bcryptjs');
 const { generateAccessToken, generateRefreshToken } = require('../utils/tokens');
 
-
-
+// Generate Access and Refresh Tokens
 async function generateAccessAndRefreshToken(_id) {
     try {
-        const user = await Applicant.findById(_id)
+        const user = await Applicant.findById(_id); // Use findById for MongoDB
         if (!user) {
-            return res.status(404).json({ message: "User not found" })
+            throw new Error("User not found");
         }
 
-        const accessToken = generateAccessToken(user)
-        const refreshToken = generateRefreshToken(user)
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
 
-        return { accessToken, refreshToken }
-
+        return { accessToken, refreshToken };
     } catch (error) {
         console.error("Error generating tokens:", error);
-        res.status(500).json({ message: "Something went wrong while generating tokens" })
+        throw new Error("Token generation failed");
     }
 }
 
-
-
-// Controller for applicant registration
+// Register Applicant
 const registerApplicant = async (req, res) => {
     const { name, username, email, password } = req.body;
     console.log("Request received for applicant registration");
@@ -63,7 +60,7 @@ const registerApplicant = async (req, res) => {
     }
 };
 
-
+// Sign-In
 const signIn = async (req, res) => {
     const { email, password } = req.body;
 
@@ -72,42 +69,79 @@ const signIn = async (req, res) => {
             return res.status(400).json({ message: "Email and password are required" });
         }
 
-        const user = await Applicant.findOne({ email })
+        const user = await Applicant.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: `User with ${email} not registered` })
+            return res.status(400).json({ message: `User with ${email} not registered` });
         }
 
-        const isPasswordMatched = await bcryptjs.compare(password, user.password)
-        // console.log(isPasswordMatched);
+        const isPasswordMatched = await bcryptjs.compare(password, user.password);
         if (!isPasswordMatched) {
-            return res.status(400).json({ message: `Invalid email or password` })
+            return res.status(400).json({ message: `Invalid email or password` });
         }
 
-        const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id)
-        const options = {
+        const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
+        const cookieOptions = {
             httpOnly: true,
-            secure: false,
+            secure: process.env.NODE_ENV === 'production', // Secure in production
             sameSite: 'strict',
+            path: '/', // Explicit path
         };
 
         user.refreshToken = refreshToken;
         await user.save();
 
         return res.status(200)
-            .cookie("refreshToken", refreshToken, options)
-            .cookie("accessToken", accessToken, options)
-            .json({ message: "Sign in successfull", user, refreshToken, accessToken })
+            .cookie("refreshToken", refreshToken, cookieOptions)
+            .cookie("accessToken", accessToken, cookieOptions)
+            .json({ message: "Sign in successful", user, refreshToken, accessToken });
 
     } catch (error) {
-        console.error('Error sigining applicant:', error);
+        console.error('Error signing in applicant:', error);
         res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }
-}
+};
 
+// LogOut
+const logout = async (req, res) => {
+    console.log("Logout request hit");
 
+    try {
+        const token = req.cookies?.refreshToken || req.header('Authorization')?.replace('Bearer ', '');
 
+        if (!token) {
+            return res.status(400).json({ message: 'No refresh token provided' });
+        }
+
+        const decodedToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+
+        const user = await Applicant.findById(decodedToken._id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.refreshToken = null;
+        await user.save();
+
+        const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            path: '/', // Explicit path
+        };
+
+        res.clearCookie('refreshToken', cookieOptions);
+        res.clearCookie('accessToken', cookieOptions);
+
+        return res.status(200).json({ message: 'User logged out successfully' });
+
+    } catch (err) {
+        console.error('Error logging out user:', err);
+        return res.status(500).json({ message: 'Error logging out user' });
+    }
+};
 
 module.exports = {
     registerApplicant,
     signIn,
+    logout,
 };

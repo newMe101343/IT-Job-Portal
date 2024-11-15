@@ -1,3 +1,4 @@
+const cookieParser = require('cookie-parser');
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./db/connect');
@@ -16,6 +17,9 @@ app.use(cors(corsOptions)); // Use the customized CORS options
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+app.use(cookieParser());
+
 
 // Connecting MongoDB
 connectDB();

@@ -10,7 +10,25 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const { isLoggedIn, setIsLoggedIn } = useUserContext();  // Using the custom hook here
 
-    function logOutClick() {
+    async function logOutClick() {
+
+        
+        const response = fetch("http://localhost:5000/applicant/logout",{
+                method:'POST',
+                credentials: 'include',
+                
+            });
+       
+            // console.log(await response.json());
+        
+        const response2 = fetch("http://localhost:5000/HR/logout",{
+            method:'POST',
+            credentials: 'include',
+
+        });
+        // console.log(await response.json());
+        
+
         setIsLoggedIn(false);
         router.push("/pages/sign-in")
     }
