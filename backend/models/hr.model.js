@@ -7,6 +7,11 @@ const hrSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    username: {
+        type: String,
+        required: true,
+        trim: true
+    },
     email: {
         type: String,
         required: true,
@@ -27,12 +32,10 @@ const hrSchema = new mongoose.Schema({
     },
     company: {
         type: String,
-        required: true,
         trim: true
     },
     company_category: {
         type: String,
-        required: true,
         trim: true
     },
     companyWebsite: {
@@ -61,11 +64,11 @@ const hrSchema = new mongoose.Schema({
     }
 });
 
-userSchema.methods.generateAccessToken = function () {
+hrSchema.methods.generateAccessToken = function () {
     return generateAccessToken(this);
 };
 
-userSchema.methods.generateRefreshToken = function () {
+hrSchema.methods.generateRefreshToken = function () {
     return generateRefreshToken(this);
 };
 

@@ -79,6 +79,33 @@ export default function Register() {
 
             else {
                 // HR route
+                const data = {
+                    name: `${formData.Fname} ${formData.Lname}`,
+                    username: formData.Username,
+                    email: formData.Email,
+                    password: formData.Password,
+                };
+
+                const response = await fetch("http://localhost:5000/HR/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                console.log("error response:" + await response);
+
+                if (response.ok) {
+
+                    toast("Account Created Succefully")
+                    setTimeout(() => {
+                        router.push("/");
+                    }, 3000);
+                    
+                } else {
+                    toast("Email Already Exists");
+                }
 
             }
         }

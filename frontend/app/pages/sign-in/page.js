@@ -2,13 +2,15 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { useState, useContext } from 'react'
+import { useState,useEffect, useContext } from 'react'
 import { useRouter } from 'next/navigation'
 import { useUserContext } from '../../Contexts/userContext'; // If the 'Contexts' folder is one level up  
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function SignIn() {
+
+  const [AccType, setAccType] = useState("");
 
   const { isLoggedIn, setIsLoggedIn } = useUserContext();
 
@@ -33,32 +35,66 @@ export default function SignIn() {
     if (Pass === "") {
       toast("Enter Password");
     } else {
-      const data = { email: Email, password: Pass };
 
-      try {
-        const response = await fetch("http://localhost:5000/applicant/signin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-          credentials: "include",
-        });
+      if (AccType == "applicant") {
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          toast.error(errorData.message); // Display backend error message
-          return;
+        const data = { email: Email, password: Pass };
+
+        try {
+          const response = await fetch("http://localhost:5000/applicant/signin", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+            credentials: "include",
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            toast.error(errorData.message); // Display backend error message
+            return;
+          }
+
+          toast("Sign In Successful");
+          setTimeout(() => {
+            setIsLoggedIn(true);
+            router.push("/");
+          }, 2000);
+        } catch (error) {
+          console.error("Error during sign-in:", error);
+          toast.error("An error occurred during sign-in");
         }
+      }
+      else{
+        //HR logic
+        const data = { email: Email, password: Pass };
 
-        toast("Sign In Successful");
-        setTimeout(() => {
-          setIsLoggedIn(true);
-          router.push("/");
-        }, 2000);
-      } catch (error) {
-        console.error("Error during sign-in:", error);
-        toast.error("An error occurred during sign-in");
+        try {
+          const response = await fetch("http://localhost:5000/HR/signin", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+            credentials: "include",
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            toast.error(errorData.message); // Display backend error message
+            return;
+          }
+
+          toast("Sign In Successful");
+          setTimeout(() => {
+            setIsLoggedIn(true);
+            router.push("/");
+          }, 2000);
+        } catch (error) {
+          console.error("Error during sign-in:", error);
+          toast.error("An error occurred during sign-in");
+        }
       }
     }
   }
@@ -69,6 +105,13 @@ export default function SignIn() {
     }
   }
 
+  function handleAccTypeChange(e) {
+    setAccType(e.target.value);
+     }
+
+  useEffect(() => {
+    console.log(AccType);
+}, [AccType]);
 
 
   return (
@@ -83,9 +126,10 @@ export default function SignIn() {
           >
             <div className="flex items-center h-full px-20 bg-gray-900 bg-opacity-40">
               <div>
-                <h2 className="text-2xl font-bold text-white sm:text-3xl">Blog.</h2>
+                <h2 className="text-2xl font-bold text-white sm:text-3xl">TechHire</h2>
                 <p className="max-w-xl mt-3 text-gray-300">
-                  Welcome to Blog — where every voice finds its stage. Share your stories, insights, and passions with a vibrant community of readers and writers. Seamlessly blend creativity with simplicity, and let your words make an impact.
+                  Welcome to TechHire — the platform where talent meets opportunity.
+                  Showcase your skills, connect with top IT recruiters, and explore exciting job opportunities. Whether you're a developer, designer, or tech enthusiast, find the perfect role that aligns with your expertise and passion.
                 </p>
               </div>
             </div>
@@ -138,7 +182,21 @@ export default function SignIn() {
                     />
                   </div>
 
-                  <div className="mt-6">
+                  <div>
+                    <label className="block mb-4 mt-4  text-sm text-gray-600 dark:text-gray-200">Account type</label>
+                    <select
+                      name="accountType"
+                      value={AccType}
+                      onChange={handleAccTypeChange}
+                      className="block w-10/12 h-12 px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                    >
+                      <option value="">Select Account Type</option>
+                      <option value="applicant">Applicant</option>
+                      <option value="recruiter">Recruiter</option>
+                    </select>
+                  </div>
+
+                  <div className="mt-8">
                     <button
                       type="button"
                       onKeyDown={handleKeyPress}

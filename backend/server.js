@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./db/connect');
 const applicant = require('./routes/applicant.route'); 
+const HR = require('./routes/hr.route')
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -21,6 +22,7 @@ connectDB();
 
 // Applicant middleware for routing
 app.use('/applicant', applicant);
+app.use('/HR', HR);
 
 app.get('/', (req, res) => {
     res.json({ message: 'Backend connected successfully' });
