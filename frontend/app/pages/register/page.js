@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Register() {
 
@@ -33,55 +35,60 @@ export default function Register() {
 
     async function onSubmit(e) {
 
-        if(formData.ConfPassword==formData.Password){
+        if (formData.ConfPassword == formData.Password) {
 
             e.preventDefault(); // Prevent the default form submission behavior (page reload)
-            
-            
-            
+
+
+
             if (formData.accountType === "") {
-                alert("Choose Account type");
+                toast("Choose Account type");
             } else if (formData.accountType === "applicant") {
-                
-                
+
+
                 const data = {
                     name: `${formData.Fname} ${formData.Lname}`,
+                    username: formData.Username,
                     email: formData.Email,
                     password: formData.Password,
                 };
-    
-            const response = await fetch("http://localhost:5000/applicant/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            });
-            
-            console.log(response);
-            
-            if (response.ok) {
-                alert("Added successfully");
-                router.push('/')
-            } else {
-                alert("Error");
+
+                const response = await fetch("http://localhost:5000/applicant/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                console.log("error response:" + await response);
+
+                if (response.ok) {
+
+                    toast("Account Created Succefully")
+                    setTimeout(() => {
+                        router.push("/");
+                    }, 3000);
+                    
+                } else {
+                    toast("Email Already Exists");
+                }
             }
-        } 
-        
-        
-        
+
+
+
+            else {
+                // HR route
+
+            }
+        }
+
         else {
-            // HR route
-            
+            e.preventDefault();
+            toast("Passwords dont match");
         }
     }
 
-    else{
-        e.preventDefault();
-        alert("Passwords dont match");
-    }
-}
-    
 
     return (
         <div>
@@ -184,7 +191,7 @@ export default function Register() {
                                 </div>
 
                                 <button
-                                    
+
                                     onClick={onSubmit}
                                     className="flex items-center mt-8 justify-between w-40  h-10  px-6 py-3 text-sm tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
                                 >
@@ -204,6 +211,7 @@ export default function Register() {
                                         />
                                     </svg>
                                 </button>
+                                        <ToastContainer theme="dark"></ToastContainer>
                             </form>
                         </div>
                     </div>
