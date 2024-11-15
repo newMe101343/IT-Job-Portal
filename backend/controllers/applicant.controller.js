@@ -1,6 +1,7 @@
 const Applicant = require('../models/applicant.model');
 const bcryptjs = require('bcryptjs');
-const { generateAccessToken, generateRefreshToken } = require('../utils/tokens.js')
+const { generateAccessToken, generateRefreshToken } = require('../utils/tokens');
+
 
 
 async function generateAccessAndRefreshToken(_id) {
@@ -63,7 +64,7 @@ const registerApplicant = async (req, res) => {
 };
 
 
-const sigIn = async (req, res) => {
+const signIn = async (req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -104,12 +105,9 @@ const sigIn = async (req, res) => {
 }
 
 
-const anotherRouteHandler = (req, res) => {
-    res.status(200).json({ message: 'This is another route!' });
-};
+
 
 module.exports = {
     registerApplicant,
-    sigIn,
-    anotherRouteHandler,
+    signIn,
 };

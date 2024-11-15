@@ -89,6 +89,12 @@ export default function Register() {
         }
     }
 
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+          onSubmit(e);
+        }
+      }
+
 
     return (
         <div>
@@ -181,6 +187,7 @@ export default function Register() {
                                     <select
                                         name="accountType"
                                         value={formData.accountType}
+                                        onKeyDown={handleKeyPress}
                                         onChange={handleChange}
                                         className="block w-10/12 h-12 px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
                                     >

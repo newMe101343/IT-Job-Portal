@@ -1,11 +1,8 @@
 const router = require('express').Router();
-const { registerApplicant, anotherRouteHandler, sigIn } = require('../controllers/applicant.controller');
+const { registerApplicant, anotherRouteHandler, signIn } = require('../controllers/applicant.controller');
 
 router.post('/register', registerApplicant);
 
-router.post('/sigin', sigIn);
-
-// Another route
-router.get('/another-route', anotherRouteHandler);
+router.post('/signin', signIn);
 
 module.exports = router;

@@ -1,8 +1,76 @@
+"use client"
+
 import React from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
+import { useState, useContext } from 'react'
+import { useRouter } from 'next/navigation'
+import { useUserContext } from '../../Contexts/userContext'; // If the 'Contexts' folder is one level up  
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function SignIn() {
+
+  const { isLoggedIn, setIsLoggedIn } = useUserContext();
+
+  const router = useRouter();
+  const [Pass, setPass] = useState("");
+  const [Email, setEmail] = useState("");
+
+  function handleChangeEmail(e) {
+    setEmail(e.target.value);
+  }
+
+  function handleChangePass(e) {
+    setPass(e.target.value);
+  }
+
+
+  async function onSubmit() {
+    if (Email === "") {
+      toast("Enter Email");
+    }
+
+    if (Pass === "") {
+      toast("Enter Password");
+    } else {
+      const data = { email: Email, password: Pass };
+
+      try {
+        const response = await fetch("http://localhost:5000/applicant/signin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          toast.error(errorData.message); // Display backend error message
+          return;
+        }
+
+        toast("Sign In Successful");
+        setTimeout(() => {
+          setIsLoggedIn(true);
+          router.push("/");
+        }, 2000);
+      } catch (error) {
+        console.error("Error during sign-in:", error);
+        toast.error("An error occurred during sign-in");
+      }
+    }
+  }
+
+  function handleKeyPress(e) {
+    if (e.key === 'Enter') {
+      onSubmit();
+    }
+  }
+
+
+
   return (
     <div>
       <div className="bg-white dark:bg-slate-950">
@@ -46,7 +114,8 @@ export default function SignIn() {
                       type="email"
                       name="email"
                       id="email"
-
+                      onChange={handleChangeEmail}
+                      value={Email}
                       placeholder="example@example.com"
                       className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
                     />
@@ -61,7 +130,9 @@ export default function SignIn() {
                       type="password"
                       name="password"
                       id="password"
-
+                      value={Pass}
+                      onKeyDown={handleKeyPress}
+                      onChange={handleChangePass}
                       placeholder="Your Password"
                       className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
                     />
@@ -70,6 +141,8 @@ export default function SignIn() {
                   <div className="mt-6">
                     <button
                       type="button"
+                      onKeyDown={handleKeyPress}
+                      onClick={onSubmit}
                       className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:bg-blue-400 focus:ring focus:ring-blue-300 focus:ring-opacity-50"
 
                     >
@@ -93,7 +166,7 @@ export default function SignIn() {
                     </button>
                   </div> */}
 
-                  
+
 
 
 
@@ -103,6 +176,7 @@ export default function SignIn() {
               </div>
             </div>
           </div>
+          <ToastContainer></ToastContainer>
         </div>
       </div>
     </div>
