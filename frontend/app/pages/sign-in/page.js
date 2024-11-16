@@ -1,118 +1,82 @@
-"use client"
+"use client";
 
-import React from 'react'
-import Link from 'next/link'
-import { useState,useEffect, useContext } from 'react'
-import { useRouter } from 'next/navigation'
-import { useUserContext } from '../../Contexts/userContext'; // If the 'Contexts' folder is one level up  
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useUserContext } from '../../Contexts/userContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function SignIn() {
-
   const [AccType, setAccType] = useState("");
-
   const { isLoggedIn, setIsLoggedIn } = useUserContext();
-
   const router = useRouter();
   const [Pass, setPass] = useState("");
   const [Email, setEmail] = useState("");
 
-  function handleChangeEmail(e) {
-    setEmail(e.target.value);
-  }
+  const handleChangeEmail = (e) => setEmail(e.target.value);
+  const handleChangePass = (e) => setPass(e.target.value);
 
-  function handleChangePass(e) {
-    setPass(e.target.value);
-  }
-
-
-  async function onSubmit() {
+  const onSubmit = async () => {
     if (Email === "") {
       toast("Enter Email");
+      return;
     }
 
     if (Pass === "") {
       toast("Enter Password");
-    } else {
-
-      if (AccType == "applicant") {
-
-        const data = { email: Email, password: Pass };
-
-        try {
-          const response = await fetch("http://localhost:5000/applicant/signin", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-            credentials: "include",
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            toast.error(errorData.message); // Display backend error message
-            return;
-          }
-
-          toast("Sign In Successful");
-          setTimeout(() => {
-            setIsLoggedIn(true);
-            router.push("/");
-          }, 2000);
-        } catch (error) {
-          console.error("Error during sign-in:", error);
-          toast.error("An error occurred during sign-in");
-        }
-      }
-      else{
-        //HR logic
-        const data = { email: Email, password: Pass };
-
-        try {
-          const response = await fetch("http://localhost:5000/HR/signin", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-            credentials: "include",
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            toast.error(errorData.message); // Display backend error message
-            return;
-          }
-
-          toast("Sign In Successful");
-          setTimeout(() => {
-            setIsLoggedIn(true);
-            router.push("/");
-          }, 2000);
-        } catch (error) {
-          console.error("Error during sign-in:", error);
-          toast.error("An error occurred during sign-in");
-        }
-      }
+      return;
     }
-  }
 
-  function handleKeyPress(e) {
+    const data = { email: Email, password: Pass };
+    let response;
+
+    try {
+      if (AccType === "applicant") {
+        response = await fetch("http://localhost:5000/applicant/signin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+          credentials: "include",
+        });
+      } else if (AccType === "recruiter") {
+        response = await fetch("http://localhost:5000/HR/signin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+          credentials: "include",
+        });
+      } else {
+        toast.error("Please select account type.");
+        return;
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast.error(errorData.message); // Display backend error message
+        return;
+      }
+
+      toast("Sign In Successful");
+
+      setTimeout(() => {
+        setIsLoggedIn(true); // Update context state to logged in
+        localStorage.setItem('isLoggedIn', JSON.stringify(true)); // Sync with localStorage
+        router.push("/"); // Redirect to homepage
+      }, 2000);
+    } catch (error) {
+      console.error("Error during sign-in:", error);
+      toast.error("An error occurred during sign-in");
+    }
+  };
+
+  const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       onSubmit();
     }
-  }
+  };
 
-  function handleAccTypeChange(e) {
-    setAccType(e.target.value);
-     }
-
-  useEffect(() => {
-    console.log(AccType);
-}, [AccType]);
-
+  const handleAccTypeChange = (e) => setAccType(e.target.value);
 
   return (
     <div>
@@ -138,19 +102,13 @@ export default function SignIn() {
           <div className="flex mt-16 w-full max-w-md px-6 mx-auto lg:w-2/6">
             <div className="flex-1">
               <div className="text-center">
-
-
-
-
                 <div className="h-8"> {/* Fixed height to prevent shifting */}
-                  <p className="text-black text-3xl font-bold font-serif  dark:text-white">TechHire</p>
+                  <p className="text-black text-3xl font-bold font-serif dark:text-white">TechHire</p>
                 </div>
-
                 <br />
-
               </div>
 
-              <div >
+              <div>
                 <form>
                   <div>
                     <label htmlFor="email" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Email Address</label>
@@ -202,41 +160,19 @@ export default function SignIn() {
                       onKeyDown={handleKeyPress}
                       onClick={onSubmit}
                       className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:bg-blue-400 focus:ring focus:ring-blue-300 focus:ring-opacity-50"
-
                     >
                       Sign in
                     </button>
                   </div>
-
-                  {/* <div className="mt-6 mx-auto flex space-x-4">
-                    <button
-                      type="button"
-                      className="w-2/5 px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:bg-blue-400 focus:ring focus:ring-blue-300 focus:ring-opacity-50"
-                    >
-                      Sign in
-                    </button>
-
-                    <button
-                      type="button"
-                      className="w-2/5 px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:bg-blue-400 focus:ring focus:ring-blue-300 focus:ring-opacity-50"
-                    >
-                      Sign in
-                    </button>
-                  </div> */}
-
-
-
-
-
                 </form>
 
                 <p className="mt-6 text-sm text-center text-gray-400">Don’t have an account yet? <Link href="../pages/register" className="text-blue-500 focus:outline-none focus:underline hover:underline">Sign up</Link></p>
               </div>
             </div>
           </div>
-          <ToastContainer></ToastContainer>
+          <ToastContainer />
         </div>
       </div>
     </div>
-  )
+  );
 }
