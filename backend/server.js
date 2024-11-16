@@ -4,6 +4,8 @@ const cors = require('cors');
 const connectDB = require('./db/connect');
 const applicant = require('./routes/applicant.route'); 
 const HR = require('./routes/hr.route')
+const multer = require('multer');
+const upload = multer(); // Memory storage (no disk save)
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -17,6 +19,9 @@ app.use(cors(corsOptions)); // Use the customized CORS options
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(upload.none());
+
 
 app.use(cookieParser());
 
