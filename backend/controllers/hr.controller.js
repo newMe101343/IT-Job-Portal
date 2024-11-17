@@ -149,8 +149,7 @@ const logout = async (req, res) => {
 
 //fetch user details
 const fetchHRDetails = async (req, res) => {
-    console.log('Received request to fetch applicant details');
-    console.log('Request headers:', req.headers);
+
 
     try {
         // Get the token from the cookies
@@ -161,18 +160,15 @@ const fetchHRDetails = async (req, res) => {
             return res.status(400).json({ message: 'No refresh token provided' });
         }
 
-        console.log("Received token:", token); // Log the token
 
         // Find the user by the refresh token
         const user = await HR.findOne({ refreshToken: token });
 
         if (!user) {
-            console.log('User not found or invalid token');
             return res.status(404).json({ message: 'User not found or invalid token' });
         }
 
-        const { password, ...userDetails } = user._doc; // Exclude password from the response
-        console.log('User found:', userDetails); // Log the user details returned
+        const { password, ...userDetails } = user._doc; // Exclude password from the response // Log the user details returned
 
         // Send response
         return res.status(200).json(userDetails);

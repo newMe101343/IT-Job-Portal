@@ -57,7 +57,7 @@ export default function SignIn() {
         return;
       }
 
-      toast("Sign In Successful");
+      toast.success("Sign In Successful");
 
       setTimeout(() => {
         setIsLoggedIn(true); // Update context state to logged in

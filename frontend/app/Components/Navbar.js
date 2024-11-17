@@ -22,12 +22,6 @@ export default function Navbar() {
         setIsLoading(false);  // Set loading to false after checking localStorage
     }, [setIsLoggedIn]);
 
-    // Handle logout
-    const handleLogout = () => {
-        setIsLoggedIn(false);
-        localStorage.removeItem('isLoggedIn'); // Remove from localStorage
-        router.push('/pages/sign-in'); // Redirect to login page
-    };
 
     // Don't render the Navbar until the loading state is false
     if (isLoading) return null;  // Optionally, you can render a loader here

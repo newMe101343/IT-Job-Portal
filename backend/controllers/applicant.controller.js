@@ -29,7 +29,7 @@ const registerApplicant = async (req, res) => {
     if (!name || !username || !email || !password) {
         console.log(req.body);
         console.log(req.headers);
-        
+
         return res.status(400).json({ message: `'All fields are required'` });
     }
 
@@ -146,8 +146,7 @@ const logout = async (req, res) => {
 
 //fetch user details
 const fetchApplicantDetails = async (req, res) => {
-    console.log('Received request to fetch applicant details');
-    console.log('Request headers:', req.headers);
+
 
     try {
         // Get the token from the cookies
@@ -164,7 +163,6 @@ const fetchApplicantDetails = async (req, res) => {
         const user = await Applicant.findOne({ refreshToken: token });
 
         if (!user) {
-            console.log('User not found or invalid token');
             return res.status(404).json({ message: 'User not found or invalid token' });
         }
 
@@ -179,10 +177,29 @@ const fetchApplicantDetails = async (req, res) => {
     }
 };
 
+//Update Password
+const updatePassword = async (req, res) => {
+    try {
+        const { newPass } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await Applicant.findOne({ refreshToken: token });
+
+        const hashedPassword = await bcryptjs.hash(newPass, 10); // Salt rounds = 10
+        user.password = hashedPassword;
+        await user.save();
+
+        return res.status(200).json({ message: 'Password updated successfully.' });
+    } catch (err) {
+        console.error('Error updating password:', err);
+        return res.status(500).json({ message: 'Error updating password.', error: err.message });
+    }
+};
+
 
 module.exports = {
     registerApplicant,
     signIn,
     logout,
-    fetchApplicantDetails
+    fetchApplicantDetails,
+    updatePassword,
 };

@@ -111,9 +111,9 @@ function Sidebar() {
                             <span className="mx-4 font-medium">Jobs</span>
                         </Link>
 
-                        <button className="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700">
+                        <Link href="/pages/profile-applicant" className="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700">
                             <span className="mx-4 font-medium">Profile</span>
-                        </button>
+                        </Link>
 
                         <Link href="/" className="flex items-center px-4 py-2 mt-5 text-black transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700">
                             <span className="mx-4 font-medium">Settings</span>
