@@ -27,8 +27,8 @@ export default function RootLayout({ children }) {
       >
         <UserProvider>
 
-        <main>
           <Navbar></Navbar>
+        <main className="mt-16">
         {children}
         </main>
         </UserProvider>

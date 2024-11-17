@@ -8,10 +8,9 @@ import { useRouter } from 'next/navigation';
 export default function Navbar() {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
-    const { isLoggedIn, setIsLoggedIn } = useUserContext();  // Using the custom hook here
-    const [isLoading, setIsLoading] = useState(true);  // Track loading state
+    const { isLoggedIn, setIsLoggedIn } = useUserContext();
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Ensure the 'isLoggedIn' state is updated from localStorage on component mount
     useEffect(() => {
         const storedLoginStatus = localStorage.getItem('isLoggedIn');
         if (storedLoginStatus === 'true') {
@@ -19,15 +18,13 @@ export default function Navbar() {
         } else {
             setIsLoggedIn(false);
         }
-        setIsLoading(false);  // Set loading to false after checking localStorage
+        setIsLoading(false);
     }, [setIsLoggedIn]);
 
-
-    // Don't render the Navbar until the loading state is false
-    if (isLoading) return null;  // Optionally, you can render a loader here
+    if (isLoading) return null;
 
     return (
-        <nav className="bg-slate-950 shadow dark:bg-black">
+        <nav className="bg-slate-950 shadow dark:bg-black fixed top-0 left-0 right-0 z-50">
             <div className="container px-6 py-4 mx-auto">
                 <div className="lg:flex lg:items-center">
                     <div className="flex items-center justify-between mr-10">

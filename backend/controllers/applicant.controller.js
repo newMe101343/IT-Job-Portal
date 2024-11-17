@@ -229,6 +229,93 @@ const updateUsername = async (req, res) => {
     }
 };
 
+//Update Github
+const updateGitHub = async (req, res) => {
+    try {
+        const { newGitHub } = req.body;
+        console.log(newGitHub);
+        const token = req.cookies?.refreshToken;
+        const user = await Applicant.findOne({ refreshToken: token });
+
+        user.GitHub = newGitHub;
+        await user.save();
+
+        return res.status(200).json({ message: 'GitHub profile updated successfully.' });
+    } catch (err) {
+        console.error('Error updating GitHub:', err);
+        return res.status(500).json({ message: 'Error updating GitHub.', error: err.message });
+    }
+};
+
+//Update Leetcode
+const updateLeetcode = async (req, res) => {
+    try {
+        const { newLeetcode } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await Applicant.findOne({ refreshToken: token });
+
+        user.LeetCode = newLeetcode;
+        await user.save();
+
+        return res.status(200).json({ message: 'Leetcode profile updated successfully.' });
+    } catch (err) {
+        console.error('Error updating Leetcode:', err);
+        return res.status(500).json({ message: 'Error updating Leetcode.', error: err.message });
+    }
+};
+
+//update Twitter
+const updateTwitter = async (req, res) => {
+    try {
+        const { newTwitter } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await Applicant.findOne({ refreshToken: token });
+
+        user.Twitter = newTwitter;
+        await user.save();
+
+        return res.status(200).json({ message: 'Twitter handle updated successfully.' });
+    } catch (err) {
+        console.error('Error updating Twitter:', err);
+        return res.status(500).json({ message: 'Error updating Twitter.', error: err.message });
+    }
+};
+
+//Update StackOverflow
+const updateStackOverflow = async (req, res) => {
+    try {
+        const { newStackOverflow } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await Applicant.findOne({ refreshToken: token });
+
+        user.StackOverflow = newStackOverflow;
+        await user.save();
+
+        return res.status(200).json({ message: 'StackOverflow profile updated successfully.' });
+    } catch (err) {
+        console.error('Error updating StackOverflow:', err);
+        return res.status(500).json({ message: 'Error updating StackOverflow.', error: err.message });
+    }
+};
+
+//Update LInked in
+const updateLinkedIn = async (req, res) => {
+    try {
+        const { newLinkedIn } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await Applicant.findOne({ refreshToken: token });
+
+        user.LinkedIn = newLinkedIn;
+        await user.save();
+
+        return res.status(200).json({ message: 'LinkedIn profile updated successfully.' });
+    } catch (err) {
+        console.error('Error updating LinkedIn:', err);
+        return res.status(500).json({ message: 'Error updating LinkedIn.', error: err.message });
+    }
+};
+
+
 
 module.exports = {
     registerApplicant,
@@ -238,4 +325,10 @@ module.exports = {
     updatePassword,
     updateEmail,
     updateUsername,
+    updateGitHub,
+    updateLeetcode,
+    updateTwitter,
+    updateStackOverflow,
+    updateLinkedIn
 };
+

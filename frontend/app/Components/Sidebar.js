@@ -97,7 +97,7 @@ function Sidebar() {
     };
 
     return (
-        <div className='inline-block fixed border-r-2 border-neutral-100 clear-both dark:border-black'>
+        <div className='inline-block fixed border-r-2 border-neutral-100 clear-both dark:border-black '>
             <aside className="flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-gray-200 border-r rtl:border-r-0 rtl:border-l dark:bg-gray-950 dark:border-gray-700">
                 <div className="flex flex-col justify-between flex-1">
                     <nav>

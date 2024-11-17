@@ -43,22 +43,27 @@ const applicantSchema = new mongoose.Schema({
         type: Number,
         default: null
     },
-    projectPortfolio: [
-        {
-            projectName: {
-                type: String,
-                default: null
-            },
-            projectLink: {
-                type: String,
-                default: null
-            },
-            description: {
-                type: String,
-                default: null
-            }
-        }
-    ],
+    GitHub: {
+        type: String,
+        default: null
+    },
+    LinkedIn: {
+        type: String,
+        default: null
+    },
+    Twitter: {
+        type: String,
+        default: null
+    },
+    StackOverflow: {
+        type: String,
+        default: null
+    },
+    LeetCode : {
+        type: String,
+        default: null
+    },
+    
     refreshToken: {
         type: String,
         default: null
