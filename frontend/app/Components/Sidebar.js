@@ -18,36 +18,44 @@ function Sidebar() {
     useEffect(() => {
         if (isLoggedIn) {
             const getUserDetails = async () => {
+
+
+
                 try {
-                    // for Applicant
-                    const response = await fetch('http://localhost:5000/applicant/findOneApplicant', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        credentials: 'include', // Include cookies with the request
-                    });
-                    const data = await response.json();
-                    if (response.ok) {
-                        setUser(data); // Save user details in state
-                    } else {
-                        setError(data.message || 'Error fetching user details');
+                    if (localStorage.getItem('accType') == "applicant") {
+                        // for Applicant
+                        const response = await fetch('http://localhost:5000/applicant/findOneApplicant', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            credentials: 'include', // Include cookies with the request
+                        });
+                        const data = await response.json();
+                        if (response.ok) {
+                            setUser(data); // Save user details in state
+                        } else {
+                            setError(data.message || 'Error fetching user details');
+                        }
                     }
 
-                    // for HR
-                    const hrResponse = await fetch('http://localhost:5000/HR/findOneHR', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        credentials: 'include',
-                    });
-                    const hrData = await hrResponse.json();
-                    if (hrResponse.ok) {
-                        setUser(hrData); // Save HR details if applicable
-                    } else {
-                        setError(hrData.message || 'Error fetching HR details');
+                    if (localStorage.getItem('accType') == "recruiter") {
+                        // for HR
+                        const hrResponse = await fetch('http://localhost:5000/HR/findOneHR', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            credentials: 'include',
+                        });
+                        const hrData = await hrResponse.json();
+                        if (hrResponse.ok) {
+                            setUser(hrData); // Save HR details if applicable
+                        } else {
+                            setError(hrData.message || 'Error fetching HR details');
+                        }
                     }
+
                 } catch (error) {
                     console.error('Failed to fetch user details:', error);
                     setError('Failed to fetch user details');
@@ -64,16 +72,24 @@ function Sidebar() {
     // Log out function
     const logOutClick = async () => {
         try {
-            await fetch("http://localhost:5000/applicant/logout", {
-                method: 'POST',
-                credentials: 'include',
-            });
-            await fetch("http://localhost:5000/HR/logout", {
-                method: 'POST',
-                credentials: 'include',
-            });
+
+            if (localStorage.getItem('accType') == "applicant") {
+                await fetch("http://localhost:5000/applicant/logout", {
+                    method: 'POST',
+                    credentials: 'include',
+                });
+            }
+
+            if (localStorage.getItem('accType') == "recruiter") {
+                await fetch("http://localhost:5000/HR/logout", {
+                    method: 'POST',
+                    credentials: 'include',
+                });
+            }
+
             setIsLoggedIn(false); // Update context
             localStorage.removeItem('accessToken'); // Clear access token from local storage
+            localStorage.removeItem('accType');
             router.push("/pages/sign-in"); // Redirect to sign-in page
         } catch (error) {
             console.error("Error during logout:", error);

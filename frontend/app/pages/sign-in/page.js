@@ -58,6 +58,7 @@ export default function SignIn() {
       }
 
       toast.success("Sign In Successful");
+      localStorage.setItem('accType',AccType);
 
       setTimeout(() => {
         setIsLoggedIn(true); // Update context state to logged in
