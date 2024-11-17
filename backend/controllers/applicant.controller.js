@@ -195,6 +195,40 @@ const updatePassword = async (req, res) => {
     }
 };
 
+//Update Email
+const updateEmail = async (req, res) => {
+    try {
+        const { newEmail } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await Applicant.findOne({ refreshToken: token });
+
+        user.email = newEmail;
+        await user.save();
+
+        return res.status(200).json({ message: 'Email updated successfully.' });
+    } catch (err) {
+        console.error('Error updating email:', err);
+        return res.status(500).json({ message: 'Error updating email.', error: err.message });
+    }
+};
+
+//Update Password
+const updateUsername = async (req, res) => {
+    try {
+        const { newUsername } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await Applicant.findOne({ refreshToken: token });
+
+        user.username = newUsername;
+        await user.save();
+
+        return res.status(200).json({ message: 'Email updated successfully.' });
+    } catch (err) {
+        console.error('Error updating Email:', err);
+        return res.status(500).json({ message: 'Error updating Email.', error: err.message });
+    }
+};
+
 
 module.exports = {
     registerApplicant,
@@ -202,4 +236,6 @@ module.exports = {
     logout,
     fetchApplicantDetails,
     updatePassword,
+    updateEmail,
+    updateUsername,
 };
