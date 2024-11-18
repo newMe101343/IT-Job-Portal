@@ -11,7 +11,11 @@ const {
     updateLeetcode,
     updateTwitter,
     updateStackOverflow,
-    updateLinkedIn 
+    updateLinkedIn ,
+    updateExperience,
+    updateBachelors,
+    updateMasters,
+    deleteAccount,
 } = require('../controllers/applicant.controller');
 
 // Register, Signin, Logout routes
@@ -31,5 +35,9 @@ router.post('/updateLeetcode', updateLeetcode); // New route for Leetcode update
 router.post('/updateTwitter', updateTwitter); // New route for Twitter update
 router.post('/updateStackOverflow', updateStackOverflow); // New route for StackOverflow update
 router.post('/updateLinkedIn', updateLinkedIn); // New route for LinkedIn update
+router.post('/updateExperience', updateExperience); // New route for exp[] update
+router.post('/updateBachelors', updateBachelors); // New route for bach update
+router.post('/updateMasters', updateMasters); // New route for masters update
+router.post('/deleteAccount', deleteAccount); // New route for Delete acc
 
 module.exports = router;

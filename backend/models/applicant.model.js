@@ -31,7 +31,11 @@ const applicantSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    qualifications: {
+    bachelors: {
+        type: String,
+        default: null
+    },
+    masters: {
         type: String,
         default: null
     },

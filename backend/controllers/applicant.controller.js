@@ -315,6 +315,82 @@ const updateLinkedIn = async (req, res) => {
     }
 };
 
+//Update Experience
+const updateExperience = async (req, res) => {
+    try {
+        const { newExperience } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await Applicant.findOne({ refreshToken: token });
+
+        user.experience = newExperience;
+        await user.save();
+
+        return res.status(200).json({ message: 'Experience profile updated successfully.' });
+    } catch (err) {
+        console.error('Error updating Experience:', err);
+        return res.status(500).json({ message: 'Error updating Experience.', error: err.message });
+    }
+};
+
+//Update Bachelors
+const updateBachelors = async (req, res) => {
+    try {
+        const { newBachelors } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await Applicant.findOne({ refreshToken: token });
+
+        user.bachelors = newBachelors;
+        await user.save();
+
+        return res.status(200).json({ message: 'Bachelors profile updated successfully.' });
+    } catch (err) {
+        console.error('Error updating Bachelors:', err);
+        return res.status(500).json({ message: 'Error updating Bachelors.', error: err.message });
+    }
+};
+
+//Update Masters
+const updateMasters = async (req, res) => {
+    try {
+        const { newMasters } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await Applicant.findOne({ refreshToken: token });
+
+        user.masters = newMasters;
+        await user.save();
+
+        return res.status(200).json({ message: 'Masters profile updated successfully.' });
+    } catch (err) {
+        console.error('Error updating Masters:', err);
+        return res.status(500).json({ message: 'Error updatingMasters.', error: err.message });
+    }
+};
+
+//Delete Acc
+const deleteAccount = async (req, res) => {
+    try {
+        
+        const token = req.cookies?.refreshToken;
+        const user = await Applicant.deleteOne({ refreshToken: token });
+        const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            path: '/', // Explicit path
+        };
+
+        res.clearCookie('refreshToken', cookieOptions);
+        res.clearCookie('accessToken', cookieOptions);
+
+
+
+        return res.status(200).json({ message: 'User Deleted.' });
+    } catch (err) {
+        console.error('Error deleting user:', err);
+        return res.status(500).json({ message: 'Error deletign user', error: err.message });
+    }
+};
+
 
 
 module.exports = {
@@ -329,6 +405,10 @@ module.exports = {
     updateLeetcode,
     updateTwitter,
     updateStackOverflow,
-    updateLinkedIn
+    updateLinkedIn,
+    updateExperience,
+    updateBachelors,
+    updateMasters,
+    deleteAccount       ,
 };
 
