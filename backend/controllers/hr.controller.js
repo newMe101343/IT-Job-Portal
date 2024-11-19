@@ -4,7 +4,6 @@ const bcryptjs = require('bcryptjs');
 const { generateAccessToken, generateRefreshToken } = require('../utils/tokens');
 
 
-
 async function generateAccessAndRefreshToken(_id) {
     try {
         const user = await HR.findById(_id)
@@ -67,15 +66,15 @@ const registerHR = async (req, res) => {
 
 const signIn = async (req, res) => {
     const { email, password } = req.body;
-    console.log(email+password);
-    
+    console.log(email + password);
+
 
     try {
         if (!email || !password) {
             return res.status(400).json({ message: "Email and password are required" });
         }
-        
-        
+
+
         const user = await HR.findOne({ email })
         console.log(user);
         if (!user) {
@@ -179,6 +178,58 @@ const fetchHRDetails = async (req, res) => {
 };
 
 
+//Update Password
+const updatePassword = async (req, res) => {
+    try {
+        const { newPass } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await HR.findOne({ refreshToken: token });
+
+        const hashedPassword = await bcryptjs.hash(newPass, 10); // Salt rounds = 10
+        user.password = hashedPassword;
+        await user.save();
+
+        return res.status(200).json({ message: 'Password updated successfully.' });
+    } catch (err) {
+        console.error('Error updating password:', err);
+        return res.status(500).json({ message: 'Error updating password.', error: err.message });
+    }
+};
+
+//Update Email
+const updateEmail = async (req, res) => {
+    try {
+        const { newEmail } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await HR.findOne({ refreshToken: token });
+
+        user.email = newEmail;
+        await user.save();
+
+        return res.status(200).json({ message: 'Email updated successfully.' });
+    } catch (err) {
+        console.error('Error updating email:', err);
+        return res.status(500).json({ message: 'Error updating email.', error: err.message });
+    }
+};
+
+//Update username
+const updateUsername = async (req, res) => {
+    try {
+        const { newUsername } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await HR.findOne({ refreshToken: token });
+
+        user.username = newUsername;
+        await user.save();
+
+        return res.status(200).json({ message: 'Username updated successfully.' });
+    } catch (err) {
+        console.error('Error updating Email:', err);
+        return res.status(500).json({ message: 'Error updating Username.', error: err.message });
+    }
+};
+
 
 
 module.exports = {
@@ -186,4 +237,7 @@ module.exports = {
     signIn,
     logout,
     fetchHRDetails,
+    updatePassword,
+    updateEmail,
+    updateUsername,
 };

@@ -152,7 +152,6 @@ const logout = async (req, res) => {
 //fetch user details
 const fetchApplicantDetails = async (req, res) => {
 
-
     try {
         // Get the token from the cookies
         const token = req.cookies?.refreshToken;
@@ -217,7 +216,7 @@ const updateEmail = async (req, res) => {
     }
 };
 
-//Update Password
+//Update username
 const updateUsername = async (req, res) => {
     try {
         const { newUsername } = req.body;
@@ -227,10 +226,10 @@ const updateUsername = async (req, res) => {
         user.username = newUsername;
         await user.save();
 
-        return res.status(200).json({ message: 'Email updated successfully.' });
+        return res.status(200).json({ message: 'Username updated successfully.' });
     } catch (err) {
         console.error('Error updating Email:', err);
-        return res.status(500).json({ message: 'Error updating Email.', error: err.message });
+        return res.status(500).json({ message: 'Error updating Username.', error: err.message });
     }
 };
 
