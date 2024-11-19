@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const upload = require('../middlewares/multer.middleware');
 const { 
     registerApplicant, 
     signIn,
@@ -20,7 +21,7 @@ const {
 } = require('../controllers/applicant.controller');
 
 // Register, Signin, Logout routes
-router.post('/register', registerApplicant);
+router.post('/register', upload.single('profilePicture'), registerApplicant);
 router.post('/signin', signIn);
 router.post('/logout', logout);
 

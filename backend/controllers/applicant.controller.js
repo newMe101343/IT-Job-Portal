@@ -24,6 +24,7 @@ async function generateAccessAndRefreshToken(_id) {
 // Register Applicant
 const registerApplicant = async (req, res) => {
     const { name, username, email, password } = req.body;
+    const profilePicture = req.file?.path;
     console.log("Request received for applicant registration");
 
     if (!name || !username || !email || !password) {
@@ -48,6 +49,7 @@ const registerApplicant = async (req, res) => {
             username,
             email,
             password: hashedPassword,
+            profilePicture
         });
 
         await newApplicant.save();
@@ -55,7 +57,7 @@ const registerApplicant = async (req, res) => {
         console.log(`New applicant registered: ${newApplicant}`);
         res.status(201).json({
             message: 'Applicant registered successfully!',
-            applicant: { id: newApplicant._id, name, username, email },
+            applicant: { newApplicant },
         });
     } catch (error) {
         console.error('Error registering applicant:', error);
@@ -401,7 +403,7 @@ const addSkill = async (req, res) => {
             { $addToSet: { techStack: newSkill } }, // Add newSkill to techStack if not already present
             { new: true } // Return the updated document
         );
-        
+
 
         await updatedUser.save();
 

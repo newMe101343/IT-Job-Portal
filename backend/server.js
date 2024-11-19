@@ -20,7 +20,6 @@ app.use(cors(corsOptions)); // Use the customized CORS options
 // Middleware to parse JSON bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(upload.none());
 
 
 app.use(cookieParser());

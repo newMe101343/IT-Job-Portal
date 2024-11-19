@@ -32,6 +32,7 @@ function Sidebar() {
                             credentials: 'include', // Include cookies with the request
                         });
                         const data = await response.json();
+                        console.log(data)
                         if (response.ok) {
                             setUser(data); // Save user details in state
                         } else {
@@ -103,7 +104,7 @@ function Sidebar() {
                     <nav>
                         <Image
                             className="sm:w-32 sm:h-32 rounded-xl ml-10"
-                            src="/logo.png"
+                            src= {user.profilePicture}
                             alt="Logo"
                             width={1024}
                             height={1024}
