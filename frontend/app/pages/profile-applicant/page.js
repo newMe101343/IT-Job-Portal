@@ -360,97 +360,92 @@ const Profile = () => {
 
                 {user ? (
                     <>
-                        <div className="bg-gray-200 dark:bg-gray-900 p-4 pb-3 mx-8 rounded-md flex space-x-4">
+
+                        <div className="bg-gray-200 dark:bg-gray-900 p-4 pb-3 mx-8 rounded-t-md flex space-x-4">
                             <p className="w-32 mt-1 font-semibold">Name</p>
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             <p className="mt-1">{capitalizeName(user.name)}</p>
                         </div>
 
                         {/* Username */}
-                        <div className="bg-gray-200 dark:bg-gray-900 p-4 mt-7 pb-3 mx-8 rounded-md flex space-x-4">
+                        <div className="bg-gray-200 dark:bg-gray-900 p-4  pb-3 mx-8  flex space-x-4">
                             <p className="w-32 mt-1 font-semibold">Username</p>
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             {!ShowUpdateUsername && <p className="mt-1">{user.username}</p>}
-                            {!ShowUpdateUsername && <button onClick={() => { setShowUpdateUsername(true) }} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">
-                                Update Username
-                            </button>}
                             {ShowUpdateUsername && <input type="text" value={NewUsername} onChange={(e) => setNewUsername(e.target.value)} className="rounded-md text-black bg-white dark:bg-slate-300 pl-2" />}
                             {ShowUpdateUsername && <button onClick={handleUpdateUsernameClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update Username</button>}
                         </div>
 
                         {/* Email */}
-                        <div className="bg-gray-200 dark:bg-gray-900 p-4 mt-7 pb-3 mx-8 rounded-md flex space-x-4">
+                        <div className="bg-gray-200 dark:bg-gray-900 p-4  pb-3 mx-8  flex space-x-4">
                             <p className="w-32 mt-1 font-semibold">Email</p>
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             {!ShowUpdateEmail && <p className="mt-1">{user.email}</p>}
-                            {!ShowUpdateEmail && <button onClick={() => { setShowUpdateEmail(true) }} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">
-                                Update Email
-                            </button>}
+
                             {ShowUpdateEmail && <input type="text" value={NewEmail} onChange={(e) => { setNewEmail(e.target.value) }} className="rounded-md text-black bg-white dark:bg-slate-300 pl-2" />}
                             {ShowUpdateEmail && <button onClick={handleUpdateEmailClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update Email</button>}
                         </div>
 
                         {/*Password */}
-                        <div className="bg-gray-200 dark:bg-gray-900 p-4 mt-7 pb-3 mx-8 rounded-md flex space-x-4">
+                        <div className="bg-gray-200 dark:bg-gray-900 p-4  pb-3 mx-8 rounded-b-md  flex space-x-4">
                             <p className="w-32 mt-1 font-semibold">Password</p>
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             <input type="password" value={NewPassword} onChange={(e) => { setNewPassword(e.target.value) }} className="rounded-md text-black  bg-white dark:bg-slate-300 pl-2" />
                             <button onClick={handleUpdatePasswordClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">
                                 Update Password
                             </button>
+
+
+                        </div>
+
+                        <div className="mt-8 ml-8">
+
+
+                            <button onClick={() => { setShowUpdateUsername(true) }} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">
+                                Update Username
+                            </button>
+
+                            <button onClick={() => { setShowUpdateEmail(true) }} className="bg-gray-400 mr-4 ml-4 dark:bg-gray-800  rounded-md p-2 text-sm">
+                                Update Email
+                            </button>
+
                         </div>
 
                         <p className="m-8 mt-10 font-bold text-2xl">Socials</p>
 
                         {/* GitHub */}
-                        <div className="bg-gray-200 dark:bg-gray-900 p-4 mt-7 pb-3 mx-8 rounded-md flex space-x-4">
+                        <div className="bg-gray-200 dark:bg-gray-900 p-4  pb-3 mx-8 rounded-t-md flex space-x-4">
                             <p className="w-32 mt-1 font-semibold">GitHub</p>
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             {!ShowUpdateGitHub && <p className="mt-1">{user.GitHub || "No GitHub linked"}</p>}
-                            {!ShowUpdateGitHub && <button onClick={() => { setShowUpdateGitHub(true) }} className="bg-gray-400 dark:bg-gray-800 rounded-md p-2 text-sm">
-                                Update GitHub
-                            </button>}
                             {ShowUpdateGitHub && <input type="text" value={NewGitHub} onChange={(e) => { setNewGitHub(e.target.value) }} className="rounded-md text-black  bg-white dark:bg-slate-300 pl-2" />}
                             {ShowUpdateGitHub && <button onClick={handleUpdateGitHubClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update GitHub</button>}
                         </div>
 
                         {/* Leetcode */}
-                        <div className="bg-gray-200 dark:bg-gray-900 p-4 mt-7 pb-3 mx-8 rounded-md flex space-x-4">
+                        <div className="bg-gray-200 dark:bg-gray-900 p-4  pb-3 mx-8  flex space-x-4">
                             <p className="w-32 mt-1 font-semibold">Leetcode</p>
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             {!ShowUpdateLeetcode && <p className="mt-1">{user.LeetCode || "No Leetcode linked"}</p>}
-                            {!ShowUpdateLeetcode && <button onClick={() => { setShowUpdateLeetcode(true) }} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">
-                                Update Leetcode
-                            </button>}
                             {ShowUpdateLeetcode && <input type="text" value={NewLeetcode} onChange={(e) => { setNewLeetcode(e.target.value) }} className="rounded-md text-black  bg-white dark:bg-slate-300 pl-2" />}
                             {ShowUpdateLeetcode && <button onClick={handleUpdateLeetcodeClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update Leetcode</button>}
                         </div>
 
                         {/* LinkedIn */}
-                        <div className="bg-gray-200 dark:bg-gray-900 p-4 mt-7 pb-3 mx-8 rounded-md flex space-x-4">
+                        <div className="bg-gray-200 dark:bg-gray-900 p-4  pb-3 mx-8  flex space-x-4">
                             <p className="w-32 mt-1 font-semibold">LinkedIn</p>
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             {!ShowUpdateLinkedIn && <p className="mt-1">{user.LinkedIn || "No LinkedIn linked"}</p>}
-                            {!ShowUpdateLinkedIn && <button onClick={() => { setShowUpdateLinkedIn(true) }} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">
-                                Update LinkedIn
-                            </button>}
                             {ShowUpdateLinkedIn && <input type="text" value={NewLinkedIn} onChange={(e) => { setNewLinkedIn(e.target.value) }} className="rounded-md text-black bg-gray-200 pl-2" />}
                             {ShowUpdateLinkedIn && <button onClick={handleUpdateLinkedInClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update LinkedIn</button>}
                         </div>
 
                         {/* Stack Overflow */}
-                        <div className="bg-gray-200 dark:bg-gray-900 p-4 mt-7 pb-3 mx-8 rounded-md flex space-x-4">
+                        <div className="bg-gray-200 dark:bg-gray-900 p-4  pb-3 mx-8  flex space-x-4">
                             <p className="w-32 mt-1 font-semibold">Stack Overflow</p>
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             {!ShowUpdateStackOverflow && <p className="mt-1">{user.StackOverflow || "No Stack Overflow linked"}</p>}
-                            {!ShowUpdateStackOverflow && (
-                                <button
-                                    onClick={() => { setShowUpdateStackOverflow(true); }}
-                                    className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm"
-                                >
-                                    Update Stack Overflow
-                                </button>
-                            )}
+
                             {ShowUpdateStackOverflow && (
                                 <input
                                     type="text"
@@ -470,18 +465,11 @@ const Profile = () => {
                         </div>
 
                         {/* Twitter */}
-                        <div className="bg-gray-200 dark:bg-gray-900 p-4 mt-7 pb-3 mx-8 rounded-md flex space-x-4">
+                        <div className="bg-gray-200 dark:bg-gray-900 p-4  pb-3 mx-8 rounded-b-md flex space-x-4">
                             <p className="w-32 mt-1 font-semibold">Twitter</p>
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             {!ShowUpdateTwitter && <p className="mt-1">{user.Twitter || "No Twitter linked"}</p>}
-                            {!ShowUpdateTwitter && (
-                                <button
-                                    onClick={() => { setShowUpdateTwitter(true); }}
-                                    className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm"
-                                >
-                                    Update Twitter
-                                </button>
-                            )}
+
                             {ShowUpdateTwitter && (
                                 <input
                                     type="text"
@@ -498,6 +486,40 @@ const Profile = () => {
                                     Update Twitter
                                 </button>
                             )}
+                        </div>
+
+                        {//buttons
+                        }
+
+                        <div className="ml-8 mt-8">
+
+
+                            <button onClick={() => { setShowUpdateGitHub(true) }} className="bg-gray-400 mr-4 dark:bg-gray-800 rounded-md p-2 text-sm">
+                                Update GitHub
+                            </button>
+
+                            <button onClick={() => { setShowUpdateLeetcode(true) }} className="bg-gray-400 mr-4 dark:bg-gray-800  rounded-md p-2 text-sm">
+                                Update Leetcode
+                            </button>
+
+                            <button onClick={() => { setShowUpdateLinkedIn(true) }} className="bg-gray-400 mr-4 dark:bg-gray-800  rounded-md p-2 text-sm">
+                                Update LinkedIn
+                            </button>
+
+                            <button
+                                onClick={() => { setShowUpdateStackOverflow(true); }}
+                                className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 mr-4 text-sm"
+                            >
+                                Update Stack Overflow
+                            </button>
+
+                            <button
+                                onClick={() => { setShowUpdateTwitter(true); }}
+                                className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 mr-4 text-sm"
+                            >
+                                Update Twitter
+                            </button>
+
                         </div>
 
                         <p className="m-8 mt-10 font-bold text-2xl">Technicals</p>
@@ -713,7 +735,7 @@ const Profile = () => {
                             </button>
                         </div>
 
-                        <button onClick={() => setShowPopup(true)} className="border-2 mt-2 p-2 ml-10 rounded-md bg-black border-red-700 text-red-600 mb-10 hover:bg-red-700 hover:text-white">Delete Account</button>
+                        <button onClick={() => setShowPopup(true)} className="border-2 mt-2 p-2 ml-10 rounded-md dark:bg-black border-red-700 text-red-600 mb-10 hover:bg-red-700 hover:text-white">Delete Account</button>
 
                         {ShowPopup && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                             <div className="bg-white rounded-lg shadow-lg p-6 w-96">
