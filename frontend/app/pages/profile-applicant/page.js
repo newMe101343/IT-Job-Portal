@@ -29,6 +29,7 @@ const Profile = () => {
     const [NewExperience, setNewExperience] = useState(0);
     const [NewBachelors, setNewBachelors] = useState("");
     const [NewMasters, setNewMasters] = useState("");
+    const [NewSkill, setNewSkill] = useState("");
 
 
 
@@ -46,6 +47,7 @@ const Profile = () => {
     const [ShowUpdateExperience, setShowUpdateExperience] = useState(false);
     const [ShowUpdateBachelors, setShowUpdateBachelors] = useState(false);
     const [ShowUpdateMasters, setShowUpdateMasters] = useState(false);
+    const [ShowAddSkill, setShowAddSkill] = useState(false);
 
 
     // Stack Overflow Update Function
@@ -289,7 +291,7 @@ const Profile = () => {
                 toast.success("Account Deleted");
             }, 100);
             router.push("/pages/sign-in")
-            
+
         }
     }
 
@@ -308,6 +310,24 @@ const Profile = () => {
             setShowUpdateExperience(false);
         }
     }
+
+    async function handleAddSkillClick() {
+        const response = await fetch("http://localhost:5000/applicant/addSkill", {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({ newSkill: NewSkill }),
+        });
+        if (response.ok) {
+            toast.success("Skill Added");
+            setNewSkill("");
+            setShowAddSkill(false);
+        }
+    }
+
+
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -330,7 +350,7 @@ const Profile = () => {
             };
             getUserDetails();
         }
-    }, [isLoggedIn, ShowUpdateMasters, ShowUpdateEmail, ShowUpdateExperience, ShowUpdateGitHub, ShowUpdateLeetcode, ShowUpdateLinkedIn, ShowUpdateStackOverflow, ShowUpdateTwitter, ShowUpdateUsername, ShowUpdateBachelors]);
+    }, [isLoggedIn, ShowUpdateMasters, ShowUpdateEmail, ShowAddSkill, ShowUpdateExperience, ShowUpdateGitHub, ShowUpdateLeetcode, ShowUpdateLinkedIn, ShowUpdateStackOverflow, ShowUpdateTwitter, ShowUpdateUsername, ShowUpdateBachelors]);
 
     return (
         <div>
@@ -637,6 +657,16 @@ const Profile = () => {
                                         <option value="M.Tech in Smart Infrastructure and Urban Planning">M.Tech in Smart Infrastructure and Urban Planning</option>
                                         <option value="M.Tech in Cloud Computing">M.Tech in Cloud Computing</option>
                                         <option value="M.Tech in Quantum Computing">M.Tech in Quantum Computing</option>
+                                        <option value="MBA in Information Technology">MBA in Information Technology</option>
+                                        <option value="MBA in Business Analytics">MBA in Business Analytics</option>
+                                        <option value="MBA in Data Science and Analytics">MBA in Data Science and Analytics</option>
+                                        <option value="MBA in Artificial Intelligence and Machine Learning">MBA in Artificial Intelligence and Machine Learning</option>
+                                        <option value="MBA in Digital Transformation">MBA in Digital Transformation</option>
+                                        <option value="MBA in Cybersecurity Management">MBA in Cybersecurity Management</option>
+                                        <option value="MBA in Blockchain Management">MBA in Blockchain Management</option>
+                                        <option value="MBA in Operations and IT">MBA in Operations and IT</option>
+                                        <option value="MBA in IT and Systems">MBA in IT and Systems</option>
+
                                     </select>
                                 </div>
                             )}
@@ -655,10 +685,35 @@ const Profile = () => {
                         <div className="bg-gray-200 dark:bg-gray-900 p-4 pb-3 mx-8 rounded-md mt-6 mb-6 flex space-x-4">
                             <p className="w-32 mt-1 font-semibold">Tech Stack</p>
                             <div className="w-[1px] h-9 bg-gray-400"></div>
-                            <p className="mt-1">{user.techStack}</p>
+                            <p className="mt-1">{user.techStack?.join(', ')}</p>
+
+
+                            {ShowAddSkill && <input
+                                type="text"
+                                value={NewSkill}
+                                onChange={(e) => {
+                                    setNewSkill(e.target.value);
+                                }}
+                                className="rounded-md text-black  bg-white dark:bg-slate-300 pl-2"
+                            />}
+
+                            <button
+                                onClick={() => {
+                                    console.log();
+                                    if (!ShowAddSkill) {
+                                        setShowAddSkill(true);
+                                    }
+                                    else {
+                                        handleAddSkillClick();
+                                    }
+                                }}
+                                className="bg-gray-400 dark:bg-gray-800 rounded-md p-2 text-sm"
+                            >
+                                Add Skill
+                            </button>
                         </div>
 
-                        <button onClick={()=>setShowPopup(true)} className="border-2 mt-2 p-2 ml-10 rounded-md bg-black border-red-700 text-red-600 mb-10 hover:bg-red-700 hover:text-white">Delete Account</button>
+                        <button onClick={() => setShowPopup(true)} className="border-2 mt-2 p-2 ml-10 rounded-md bg-black border-red-700 text-red-600 mb-10 hover:bg-red-700 hover:text-white">Delete Account</button>
 
                         {ShowPopup && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                             <div className="bg-white rounded-lg shadow-lg p-6 w-96">
@@ -672,7 +727,7 @@ const Profile = () => {
                                     {/* Cancel Button */}
                                     <button
                                         className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
-                                        onClick={()=>setShowPopup(false)}
+                                        onClick={() => setShowPopup(false)}
                                     >
                                         Cancel
                                     </button>

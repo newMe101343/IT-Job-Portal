@@ -65,7 +65,7 @@ export default function Register() {
 
                 if (response.ok) {
 
-                    toast("Account Created Succefully")
+                    toast.success("Account Created Succefully")
                     setTimeout(() => {
                         router.push("/");
                     }, 3000);
@@ -98,7 +98,7 @@ export default function Register() {
 
                 if (response.ok) {
 
-                    toast("Account Created Succefully")
+                    toast.success("Account Created Succefully");
                     setTimeout(() => {
                         router.push("/");
                     }, 3000);

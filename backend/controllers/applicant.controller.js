@@ -369,7 +369,7 @@ const updateMasters = async (req, res) => {
 //Delete Acc
 const deleteAccount = async (req, res) => {
     try {
-        
+
         const token = req.cookies?.refreshToken;
         const user = await Applicant.deleteOne({ refreshToken: token });
         const cookieOptions = {
@@ -391,6 +391,27 @@ const deleteAccount = async (req, res) => {
     }
 };
 
+//Add Skill
+const addSkill = async (req, res) => {
+    try {
+        const { newSkill } = req.body;
+        const token = req.cookies?.refreshToken;
+        const updatedUser = await Applicant.findOneAndUpdate(
+            { refreshToken: token }, // Find user by refresh token
+            { $addToSet: { techStack: newSkill } }, // Add newSkill to techStack if not already present
+            { new: true } // Return the updated document
+        );
+        
+
+        await updatedUser.save();
+
+        return res.status(200).json({ message: 'Skill Added successfully.' });
+    } catch (err) {
+        console.error('Error adding skill:', err);
+        return res.status(500).json({ message: 'Error addinbg skill.', error: err.message });
+    }
+};
+
 
 
 module.exports = {
@@ -409,6 +430,7 @@ module.exports = {
     updateExperience,
     updateBachelors,
     updateMasters,
-    deleteAccount       ,
+    deleteAccount,
+    addSkill,
 };
 

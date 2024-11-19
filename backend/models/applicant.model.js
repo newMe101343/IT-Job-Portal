@@ -41,7 +41,7 @@ const applicantSchema = new mongoose.Schema({
     },
     techStack: {
         type: [String],
-        default: null
+        default: []
     },
     experience: {
         type: Number,

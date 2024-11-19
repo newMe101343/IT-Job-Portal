@@ -16,6 +16,7 @@ const {
     updateBachelors,
     updateMasters,
     deleteAccount,
+    addSkill,
 } = require('../controllers/applicant.controller');
 
 // Register, Signin, Logout routes
@@ -39,5 +40,6 @@ router.post('/updateExperience', updateExperience); // New route for exp[] updat
 router.post('/updateBachelors', updateBachelors); // New route for bach update
 router.post('/updateMasters', updateMasters); // New route for masters update
 router.post('/deleteAccount', deleteAccount); // New route for Delete acc
+router.post('/addSkill', addSkill); // New route for Delete acc
 
 module.exports = router;
