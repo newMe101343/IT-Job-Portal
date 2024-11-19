@@ -312,18 +312,25 @@ const Profile = () => {
     }
 
     async function handleAddSkillClick() {
-        const response = await fetch("http://localhost:5000/applicant/addSkill", {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify({ newSkill: NewSkill }),
-        });
-        if (response.ok) {
-            toast.success("Skill Added");
-            setNewSkill("");
-            setShowAddSkill(false);
+
+        if (NewSkill == "") {
+            toast.warning("Skill cannot be a null value");
+        }
+
+        else {
+            const response = await fetch("http://localhost:5000/applicant/addSkill", {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({ newSkill: NewSkill }),
+            });
+            if (response.ok) {
+                toast.success("Skill Added");
+                setNewSkill("");
+                setShowAddSkill(false);
+            }
         }
     }
 
@@ -373,7 +380,7 @@ const Profile = () => {
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             {!ShowUpdateUsername && <p className="mt-1">{user.username}</p>}
                             {ShowUpdateUsername && <input type="text" value={NewUsername} onChange={(e) => setNewUsername(e.target.value)} className="rounded-md text-black bg-white dark:bg-slate-300 pl-2" />}
-                            {ShowUpdateUsername && <button onClick={handleUpdateUsernameClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update Username</button>}
+                            {ShowUpdateUsername && <button onClick={handleUpdateUsernameClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update</button>}
                         </div>
 
                         {/* Email */}
@@ -383,7 +390,7 @@ const Profile = () => {
                             {!ShowUpdateEmail && <p className="mt-1">{user.email}</p>}
 
                             {ShowUpdateEmail && <input type="text" value={NewEmail} onChange={(e) => { setNewEmail(e.target.value) }} className="rounded-md text-black bg-white dark:bg-slate-300 pl-2" />}
-                            {ShowUpdateEmail && <button onClick={handleUpdateEmailClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update Email</button>}
+                            {ShowUpdateEmail && <button onClick={handleUpdateEmailClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update</button>}
                         </div>
 
                         {/*Password */}
@@ -392,7 +399,7 @@ const Profile = () => {
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             <input type="password" value={NewPassword} onChange={(e) => { setNewPassword(e.target.value) }} className="rounded-md text-black  bg-white dark:bg-slate-300 pl-2" />
                             <button onClick={handleUpdatePasswordClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">
-                                Update Password
+                                Update
                             </button>
 
 
@@ -401,13 +408,20 @@ const Profile = () => {
                         <div className="mt-8 ml-8">
 
 
-                            <button onClick={() => { setShowUpdateUsername(true) }} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">
+                            <button
+                                onClick={() => { setShowUpdateUsername(true); }}
+                                className="px-6 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80"
+                            >
                                 Update Username
                             </button>
 
-                            <button onClick={() => { setShowUpdateEmail(true) }} className="bg-gray-400 mr-4 ml-4 dark:bg-gray-800  rounded-md p-2 text-sm">
+                            <button
+                                onClick={() => { setShowUpdateEmail(true); }}
+                                className="px-6 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80 mr-4 ml-4"
+                            >
                                 Update Email
                             </button>
+
 
                         </div>
 
@@ -419,7 +433,7 @@ const Profile = () => {
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             {!ShowUpdateGitHub && <p className="mt-1">{user.GitHub || "No GitHub linked"}</p>}
                             {ShowUpdateGitHub && <input type="text" value={NewGitHub} onChange={(e) => { setNewGitHub(e.target.value) }} className="rounded-md text-black  bg-white dark:bg-slate-300 pl-2" />}
-                            {ShowUpdateGitHub && <button onClick={handleUpdateGitHubClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update GitHub</button>}
+                            {ShowUpdateGitHub && <button onClick={handleUpdateGitHubClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update</button>}
                         </div>
 
                         {/* Leetcode */}
@@ -428,7 +442,7 @@ const Profile = () => {
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             {!ShowUpdateLeetcode && <p className="mt-1">{user.LeetCode || "No Leetcode linked"}</p>}
                             {ShowUpdateLeetcode && <input type="text" value={NewLeetcode} onChange={(e) => { setNewLeetcode(e.target.value) }} className="rounded-md text-black  bg-white dark:bg-slate-300 pl-2" />}
-                            {ShowUpdateLeetcode && <button onClick={handleUpdateLeetcodeClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update Leetcode</button>}
+                            {ShowUpdateLeetcode && <button onClick={handleUpdateLeetcodeClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update </button>}
                         </div>
 
                         {/* LinkedIn */}
@@ -437,7 +451,7 @@ const Profile = () => {
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             {!ShowUpdateLinkedIn && <p className="mt-1">{user.LinkedIn || "No LinkedIn linked"}</p>}
                             {ShowUpdateLinkedIn && <input type="text" value={NewLinkedIn} onChange={(e) => { setNewLinkedIn(e.target.value) }} className="rounded-md text-black bg-gray-200 pl-2" />}
-                            {ShowUpdateLinkedIn && <button onClick={handleUpdateLinkedInClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update LinkedIn</button>}
+                            {ShowUpdateLinkedIn && <button onClick={handleUpdateLinkedInClick} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">Update </button>}
                         </div>
 
                         {/* Stack Overflow */}
@@ -459,7 +473,7 @@ const Profile = () => {
                                     onClick={handleUpdateStackOverflowClick}
                                     className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm"
                                 >
-                                    Update Stack Overflow
+                                    Update
                                 </button>
                             )}
                         </div>
@@ -483,7 +497,7 @@ const Profile = () => {
                                     onClick={handleUpdateTwitterClick}
                                     className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm"
                                 >
-                                    Update Twitter
+                                    Update
                                 </button>
                             )}
                         </div>
@@ -494,31 +508,41 @@ const Profile = () => {
                         <div className="ml-8 mt-8">
 
 
-                            <button onClick={() => { setShowUpdateGitHub(true) }} className="bg-gray-400 mr-4 dark:bg-gray-800 rounded-md p-2 text-sm">
+                            <button
+                                onClick={() => { setShowUpdateGitHub(true); }}
+                                className="px-6 ml-3 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80"
+                            >
                                 Update GitHub
                             </button>
 
-                            <button onClick={() => { setShowUpdateLeetcode(true) }} className="bg-gray-400 mr-4 dark:bg-gray-800  rounded-md p-2 text-sm">
+                            <button
+                                onClick={() => { setShowUpdateLeetcode(true); }}
+                                className="px-6 ml-3 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80"
+                            >
                                 Update Leetcode
                             </button>
 
-                            <button onClick={() => { setShowUpdateLinkedIn(true) }} className="bg-gray-400 mr-4 dark:bg-gray-800  rounded-md p-2 text-sm">
+                            <button
+                                onClick={() => { setShowUpdateLinkedIn(true); }}
+                                className="px-6 py-2 ml-3 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80"
+                            >
                                 Update LinkedIn
                             </button>
 
                             <button
                                 onClick={() => { setShowUpdateStackOverflow(true); }}
-                                className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 mr-4 text-sm"
+                                className="px-6 py-2 ml-3 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80"
                             >
                                 Update Stack Overflow
                             </button>
 
                             <button
                                 onClick={() => { setShowUpdateTwitter(true); }}
-                                className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 mr-4 text-sm"
+                                className="px-6 py-2 ml-3 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80"
                             >
                                 Update Twitter
                             </button>
+
 
                         </div>
 
@@ -709,23 +733,34 @@ const Profile = () => {
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             <p className="mt-1">{user.techStack?.join(', ')}</p>
 
+                            {ShowAddSkill && (
+                                <select>
+                                    <option value="" disabled>Select a Skill</option>
+                                    <option value="JavaScript">JavaScript</option>
+                                    <option value="Java">Java</option>
+                                    <option value="Python">Python</option>
+                                    <option value="C">C</option>
+                                    <option value="C++">C++</option>
+                                    <option value="C#">C#</option>
+                                    <option value="PHP">PHP</option>
+                                    <option value="Ruby">Ruby</option>
+                                    <option value="Go">Go</option>
+                                    <option value="Swift">Swift</option>
+                                    <option value="Kotlin">Kotlin</option>
+                                    <option value="Rust">Rust</option>
+                                    <option value="TypeScript">TypeScript</option>
+                                    <option value="Ruby on Rails">Ruby on Rails</option>
+                                    <option value="SQL">SQL</option>
+                                </select>
 
-                            {ShowAddSkill && <input
-                                type="text"
-                                value={NewSkill}
-                                onChange={(e) => {
-                                    setNewSkill(e.target.value);
-                                }}
-                                className="rounded-md text-black  bg-white dark:bg-slate-300 pl-2"
-                            />}
+                            )}
 
                             <button
                                 onClick={() => {
                                     console.log();
                                     if (!ShowAddSkill) {
                                         setShowAddSkill(true);
-                                    }
-                                    else {
+                                    } else {
                                         handleAddSkillClick();
                                     }
                                 }}
@@ -734,6 +769,7 @@ const Profile = () => {
                                 Add Skill
                             </button>
                         </div>
+
 
                         <button onClick={() => setShowPopup(true)} className="border-2 mt-2 p-2 ml-10 rounded-md dark:bg-black border-red-700 text-red-600 mb-10 hover:bg-red-700 hover:text-white">Delete Account</button>
 
