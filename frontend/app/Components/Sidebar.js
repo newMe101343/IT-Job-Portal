@@ -104,7 +104,7 @@ function Sidebar() {
                     <nav>
                         <Image
                             className="sm:w-32 sm:h-32 rounded-xl ml-10"
-                            src= {user.profilePicture}
+                            src= {user?.profilePicture || "/logo.png"}
                             alt="Logo"
                             width={1024}
                             height={1024}

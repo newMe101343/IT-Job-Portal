@@ -6,7 +6,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function Register() {
-
     const router = useRouter();
 
     const [formData, setFormData] = useState({
@@ -16,7 +15,8 @@ export default function Register() {
         Username: '',
         Email: '',
         Password: '',
-        ConfPassword: ''
+        ConfPassword: '',
+        profilePicture: null, // Ensure profilePicture is part of the formData state
     });
 
     // To log accountType whenever it changes (or other state as needed)
@@ -33,95 +33,54 @@ export default function Register() {
         }));
     }
 
+    // Handle profile picture change
+    function handleProfilePicChange(e) {
+        const file = e.target.files[0];
+        setFormData(prevState => ({
+            ...prevState,
+            profilePicture: file // Update state with the selected file
+        }));
+    }
+
     async function onSubmit(e) {
+        e.preventDefault(); // Ensure the form doesn't reload
 
-        if (formData.ConfPassword == formData.Password) {
-
-            e.preventDefault(); // Prevent the default form submission behavior (page reload)
-
-
+        if (formData.ConfPassword === formData.Password) {
 
             if (formData.accountType === "") {
                 toast("Choose Account type");
-            } else if (formData.accountType === "applicant") {
+            } else {
 
+                const formDataToSend = new FormData();
+                formDataToSend.append('name', `${formData.Fname} ${formData.Lname}`);
+                formDataToSend.append('username', formData.Username);
+                formDataToSend.append('email', formData.Email);
+                formDataToSend.append('password', formData.Password);
+                formDataToSend.append('profilePicture', formData.profilePicture); // Ensure profilePicture is appended
 
-                const data = {
-                    name: `${formData.Fname} ${formData.Lname}`,
-                    username: formData.Username,
-                    email: formData.Email,
-                    password: formData.Password,
-                };
+                const endpoint = formData.accountType === "applicant"
+                    ? "http://localhost:5000/applicant/register"
+                    : "http://localhost:5000/HR/register";
 
-                const response = await fetch("http://localhost:5000/applicant/register", {
+                const response = await fetch(endpoint, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(data),
+                    body: formDataToSend,
                 });
 
-                console.log("error response:" + await response);
-
                 if (response.ok) {
-
-                    toast.success("Account Created Succefully")
+                    toast.success("Account Created Successfully");
                     setTimeout(() => {
-                        router.push("/");
+                        router.push("/"); // Redirect after success
                     }, 3000);
-                    
                 } else {
-                    toast("Email Already Exists");
+                    toast.error("Email Already Exists");
                 }
             }
 
-
-
-            else {
-                // HR route
-                const data = {
-                    name: `${formData.Fname} ${formData.Lname}`,
-                    username: formData.Username,
-                    email: formData.Email,
-                    password: formData.Password,
-                };
-
-                const response = await fetch("http://localhost:5000/HR/register", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(data),
-                });
-
-                console.log("error response:" + await response);
-
-                if (response.ok) {
-
-                    toast.success("Account Created Succefully");
-                    setTimeout(() => {
-                        router.push("/");
-                    }, 3000);
-                    
-                } else {
-                    toast("Email Already Exists");
-                }
-
-            }
-        }
-
-        else {
-            e.preventDefault();
-            toast("Passwords dont match");
+        } else {
+            toast.error("Passwords don't match");
         }
     }
-
-    function handleKeyPress(e) {
-        if (e.key === 'Enter') {
-          onSubmit(e);
-        }
-      }
-
 
     return (
         <div>
@@ -142,7 +101,8 @@ export default function Register() {
                             <p className="mt-4 text-gray-500 dark:text-gray-400">
                                 Set Up your Account
                             </p>
-                            <form className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2">
+                            <form onSubmit={onSubmit} className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2">
+                                {/* First Name */}
                                 <div>
                                     <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">First Name</label>
                                     <input
@@ -154,6 +114,7 @@ export default function Register() {
                                         required
                                     />
                                 </div>
+                                {/* Last Name */}
                                 <div>
                                     <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Last Name</label>
                                     <input
@@ -165,6 +126,7 @@ export default function Register() {
                                         required
                                     />
                                 </div>
+                                {/* Username */}
                                 <div>
                                     <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Username</label>
                                     <input
@@ -176,6 +138,7 @@ export default function Register() {
                                         required
                                     />
                                 </div>
+                                {/* Email */}
                                 <div>
                                     <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Email Address</label>
                                     <input
@@ -187,6 +150,7 @@ export default function Register() {
                                         required
                                     />
                                 </div>
+                                {/* Password */}
                                 <div>
                                     <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Password</label>
                                     <input
@@ -198,6 +162,7 @@ export default function Register() {
                                         required
                                     />
                                 </div>
+                                {/* Confirm Password */}
                                 <div>
                                     <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Confirm password</label>
                                     <input
@@ -209,48 +174,43 @@ export default function Register() {
                                         required
                                     />
                                 </div>
+                                {/* Account Type */}
                                 <div>
                                     <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Account type</label>
                                     <select
                                         name="accountType"
                                         value={formData.accountType}
-                                        onKeyDown={handleKeyPress}
-                                        onChange={handleChange}
-                                        className="block w-10/12 h-12 px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                                        onChange={handleChange}  // Only use onChange
+                                        className="block w-10/12 h-12 px-5 py-3 mt-2 text-gray-700 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
                                     >
-                                        <option value="">Select Account Type</option>
+                                        <option value="">Select account type</option>
                                         <option value="applicant">Applicant</option>
-                                        <option value="recruiter">Recruiter</option>
+                                        <option value="HR">HR</option>
                                     </select>
                                 </div>
-
+                                {/* Profile Picture */}
+                                <div>
+                                    <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Profile Picture</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleProfilePicChange}
+                                        className="block w-10/12 h-12 px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                                    />
+                                </div>
+                                {/* Submit Button */}
                                 <button
-
-                                    onClick={onSubmit}
-                                    className="flex items-center mt-8 justify-between w-40  h-10  px-6 py-3 text-sm tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+                                    type="submit"
+                                    className="w-10/12 px-5 py-3 mt-8 text-lg text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none"
                                 >
-                                    Sign Up
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="w-10 h-6 ml-2"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        strokeWidth={2}
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M5 12h14M12 5l7 7-7 7"
-                                        />
-                                    </svg>
+                                    Create Account
                                 </button>
-                                        <ToastContainer theme="dark"></ToastContainer>
                             </form>
                         </div>
                     </div>
                 </div>
             </section>
+            <ToastContainer />
         </div>
     );
 }

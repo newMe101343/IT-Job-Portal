@@ -29,7 +29,7 @@ const applicantSchema = new mongoose.Schema({
     },
     profilePicture: {
         type: String,
-        defaultValue: "https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg",
+        default: "https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg",
     },
     bachelors: {
         type: String,
