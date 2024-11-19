@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Applicant = require('../models/applicant.model');
 const bcryptjs = require('bcryptjs');
+const cloudinary = require('../config/cloudinary.config');
 const { generateAccessToken, generateRefreshToken } = require('../utils/tokens');
 
 // Generate Access and Refresh Tokens
@@ -25,6 +26,8 @@ async function generateAccessAndRefreshToken(_id) {
 const registerApplicant = async (req, res) => {
     const { name, username, email, password } = req.body;
     const profilePicture = req.file?.path;
+    console.log(req.file?.path)
+    console.log(req.file?.filename)
     console.log("Request received for applicant registration");
 
     if (!name || !username || !email || !password) {
@@ -49,7 +52,7 @@ const registerApplicant = async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            profilePicture
+            profilePicture : req.file?.filename
         });
 
         await newApplicant.save();
@@ -373,7 +376,17 @@ const deleteAccount = async (req, res) => {
     try {
 
         const token = req.cookies?.refreshToken;
-        const user = await Applicant.deleteOne({ refreshToken: token });
+        const user = await Applicant.findOne({ refreshToken: token });
+        const imagePublicId = user.profilePicture; // Retrieve the public_id from the user's document
+        console.log(user.profilePicture)
+
+        if (imagePublicId) {
+            // Delete the image from Cloudinary
+            const result = await cloudinary.uploader.destroy(imagePublicId);
+            console.log('Cloudinary Deletion Result:', result);
+        }
+
+        await Applicant.deleteOne({ refreshToken: token }); 
         const cookieOptions = {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -384,9 +397,7 @@ const deleteAccount = async (req, res) => {
         res.clearCookie('refreshToken', cookieOptions);
         res.clearCookie('accessToken', cookieOptions);
 
-
-
-        return res.status(200).json({ message: 'User Deleted.' });
+        return res.status(200).json({ message: 'User and related images Deleted ' });
     } catch (err) {
         console.error('Error deleting user:', err);
         return res.status(500).json({ message: 'Error deletign user', error: err.message });
