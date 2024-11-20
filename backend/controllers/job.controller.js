@@ -7,9 +7,9 @@ const Applicant = require("../models/applicant.model");
 // Create a job posting
 const createJobPost = async (req, res) => {
     try {
-        const { title, description, requirements, techStack } = req.body;
+        const { title, description, requirements, techStack, requiredExperience } = req.body;
 
-        if (!title || !description || !requirements || !techStack) {
+        if (!title || !description || !requirements || !techStack || !requiredExperience) {
             res.status(400).json({ message: "All fields are required" })
         }
 
@@ -26,6 +26,7 @@ const createJobPost = async (req, res) => {
             description,
             requirements,
             techStack,
+            requiredExperience,
             hrId: hr._id,
         });
 
@@ -80,7 +81,7 @@ const updateJobPost = async (req, res) => {
             return res.status(404).json({ message: "Job not found" });
         }
 
-        const { title, description, requirements, techStack } = req.body;
+        const { title, description, requirements, techStack, requiredExperience } = req.body;
 
         const token = req.cookies?.refreshToken;
         const hr = await HR.findOne({ refreshToken: token })
@@ -97,6 +98,7 @@ const updateJobPost = async (req, res) => {
         if (description) currentJob.description = description
         if (requirements) currentJob.requirements = requirements
         if (techStack) currentJob.techStack = techStack
+        if (requiredExperience) currentJob.requiredExperience = requiredExperience
 
         await currentJob.save();
         return res.status(200).json({ message: 'Job Updated successfully ' });

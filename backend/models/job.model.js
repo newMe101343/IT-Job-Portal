@@ -19,6 +19,11 @@ const jobSchema = new mongoose.Schema({
         type: [String],
         required: true
     },
+    requiredExperience: {
+        type: Number,
+        required: true,
+        trim: true,
+    },
     hrId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "HR",
