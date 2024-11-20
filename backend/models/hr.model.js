@@ -32,14 +32,17 @@ const hrSchema = new mongoose.Schema({
     },
     company: {
         type: String,
-        trim: true
+        trim: true,
+        default: null
     },
     company_category: {
         type: String,
-        trim: true
+        trim: true,
+        default: null
     },
     companyWebsite: {
         type: String,
+        default: null,
         match: [
             /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
             "Please enter a valid URL for the company website"

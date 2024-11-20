@@ -13,23 +13,9 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const { isLoggedIn, setIsLoggedIn } = useUserContext();
   const [loading, setLoading] = useState(true); // Track loading state
-  const [IsProfileComplete, setIsProfileComplete] = useState(true); // Track profile completion
 
   useEffect(() => {
-    const checkProfileCompletion = (user) => {
-      if (
-        !user.LinkedIn ||
-        !user.experience ||
-        !user.techStack ||
-        !user.bachelors ||
-        !user.masters
-      ) {
-        setIsProfileComplete(false);
-        toast.error("Please complete your Profile")
-      } else {
-        setIsProfileComplete(true);
-      }
-    };
+
 
     if (loading) {
       setLoading(false);
@@ -59,7 +45,6 @@ export default function Home() {
 
           if (response.ok) {
             setUser(data); // Save user details in state
-            checkProfileCompletion(data); // Check if profile is complete
           } else {
             console.error(data.message || "Error fetching user details");
           }
@@ -88,14 +73,7 @@ export default function Home() {
 
           <ToastContainer theme="dark"></ToastContainer>
           <div className="ml-64 pl-4 pt-4">
-            {!IsProfileComplete && (
-              <p className="font-bold text-xl">
-                Please complete your{" "}
-                <Link href="/pages/profile-applicant" className="text-blue-500 underline">
-                  profile
-                </Link>
-              </p>
-            )}
+           
           </div>
         </>
       )}

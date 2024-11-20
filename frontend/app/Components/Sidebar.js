@@ -14,6 +14,10 @@ function Sidebar() {
 
     const router = useRouter();
 
+    const isUserApplicant = (localStorage.getItem('accType')=="applicant")?  true : false;
+    console.log(isUserApplicant);
+    
+
     // Fetch user details only when logged in
     useEffect(() => {
         if (isLoggedIn) {
@@ -124,13 +128,23 @@ function Sidebar() {
                             <span className="mx-4 font-medium">Dashboard</span>
                         </Link>
 
-                        <Link className="flex items-center px-4 py-2 mt-5 text-black transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700" href="/">
-                            <span className="mx-4 font-medium">Jobs</span>
-                        </Link>
+                        {!isUserApplicant && <Link className="flex items-center px-4 py-2 mt-5 text-black transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700" href="/pages/Jobs-Listing-HR">
+                            <span className="mx-4 font-medium">Job Listing</span>
+                        </Link>}
 
-                        <Link href="/pages/profile-applicant" className="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700">
+                        {isUserApplicant && <Link className="flex items-center px-4 py-2 mt-5 text-black transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700" href="/">
+                            <span className="mx-4 font-medium">Applied Jobs</span>
+                        </Link>}
+
+                        {isUserApplicant && <Link href="/pages/profile-applicant" className="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700">
                             <span className="mx-4 font-medium">Profile</span>
-                        </Link>
+                        </Link>} 
+
+                        {!isUserApplicant && <Link href="/pages/profile-HR" className="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700">
+                            <span className="mx-4 font-medium">Profile</span>
+                        </Link>} 
+
+                        
 
                         <Link href="/" className="flex items-center px-4 py-2 mt-5 text-black transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700">
                             <span className="mx-4 font-medium">Settings</span>

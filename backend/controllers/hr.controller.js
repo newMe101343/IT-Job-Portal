@@ -237,18 +237,19 @@ const updateCompany = async (req, res) => {
         const token = req.cookies?.refreshToken;
         const user = await HR.findOne({ refreshToken: token });
 
-        user.username = newCompany;
+        user.company = newCompany;
         await user.save();
 
-        return res.status(200).json({ message: 'Username updated successfully.' });
+        return res.status(200).json({ message: 'Company updated successfully.' });
     } catch (err) {
-        console.error('Error updating Email:', err);
-        return res.status(500).json({ message: 'Error updating Username.', error: err.message });
+        console.error('Error updating Company:', err);
+        return res.status(500).json({ message: 'Error updating Company.', error: err.message });
     }
 };
 
 const updateCompanyCategory = async (req, res) => {
     try {
+        
         const { newCompanyCategory } = req.body
         const token = req.cookies?.refreshToken;
 
@@ -256,9 +257,9 @@ const updateCompanyCategory = async (req, res) => {
         user.company_category = newCompanyCategory
         await user.save();
 
-        return res.status(200).json({ message: 'Company Categoty updated successfully.' });
+        return res.status(200).json({ message: 'Company Category updated successfully.' });
     } catch (err) {
-        console.error('Error updating Email:', err);
+        console.error('Error updating Category:', err);
         return res.status(500).json({ message: 'Error updating Company Category.', error: err.message });
     }
 }
