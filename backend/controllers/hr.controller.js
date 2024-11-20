@@ -1,6 +1,7 @@
 const HR = require('../models/HR.model');
 const jwt = require('jsonwebtoken');
 const bcryptjs = require('bcryptjs');
+const cloudinary = require('../config/cloudinary.config');
 const { generateAccessToken, generateRefreshToken } = require('../utils/tokens');
 
 
@@ -27,6 +28,8 @@ async function generateAccessAndRefreshToken(_id) {
 // Controller for HR registration
 const registerHR = async (req, res) => {
     const { name, username, email, password } = req.body;
+    const profilePicture = req.file?.path
+    const publicId = req.file?.filename
     console.log("Request received for HR registration");
 
     if (!name || !username || !email || !password) {
@@ -48,14 +51,15 @@ const registerHR = async (req, res) => {
             username,
             email,
             password: hashedPassword,
+            profilePicture: publicId
         });
 
         await newHR.save();
 
-        console.log(`New HR registered: ${newHR}`);
+        // console.log(`New HR registered: ${newHR}`);
         res.status(201).json({
             message: 'HR registered successfully!',
-            HR: { id: newHR._id, name, username, email },
+            HR: { newHR },
         });
     } catch (error) {
         console.error('Error registering HR:', error);
@@ -230,6 +234,85 @@ const updateUsername = async (req, res) => {
     }
 };
 
+// update company
+const updateCompany = async (req, res) => {
+    try {
+        const { newCompany } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await HR.findOne({ refreshToken: token });
+
+        user.username = newCompany;
+        await user.save();
+
+        return res.status(200).json({ message: 'Username updated successfully.' });
+    } catch (err) {
+        console.error('Error updating Email:', err);
+        return res.status(500).json({ message: 'Error updating Username.', error: err.message });
+    }
+};
+
+const updateCompanyCategory = async (req, res) => {
+    try {
+        const { newCompanyCategory } = req.body
+        const token = req.cookies?.refreshToken;
+
+        const user = await HR.findOne({ refreshToken: token })
+        user.company_category = newCompanyCategory
+        await user.save();
+
+        return res.status(200).json({ message: 'Company Categoty updated successfully.' });
+    } catch (err) {
+        console.error('Error updating Email:', err);
+        return res.status(500).json({ message: 'Error updating Company Category.', error: err.message });
+    }
+}
+
+const updateCompanyWebsite = async (req, res) => {
+    try {
+        const { newCompanyWebsite } = req.body
+        const token = req.cookies?.refreshToken;
+
+        const user = await HR.findOne({ refreshToken: token })
+        user.companyWebsite = newCompanyWebsite
+        await user.save();
+
+        return res.status(200).json({ message: 'Company Website updated successfully.' });
+    } catch (err) {
+        console.error('Error updating Email:', err);
+        return res.status(500).json({ message: 'Error updating Company Website.', error: err.message });
+    }
+}
+
+const deleteAcc = async (req, res) => {
+    try {
+        const token = req.cookies?.refreshToken
+        const user = await HR.findOne({ refreshToken: token })
+        const imagePublicId = user.profilePicture
+
+        if (imagePublicId) {
+            // Delete the image from Cloudinary
+            const result = await cloudinary.uploader.destroy(imagePublicId);
+            console.log('Cloudinary Deletion Result:', result);
+        }
+
+        await HR.deleteOne({ refreshToken: token })
+        const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            path: '/', // Explicit path
+        };
+
+        res.clearCookie('refreshToken', cookieOptions);
+        res.clearCookie('accessToken', cookieOptions);
+
+        return res.status(200).json({ message: 'User and related images Deleted ' });
+    } catch (err) {
+        console.error('Error deleting user:', err);
+        return res.status(500).json({ message: 'Error deleting user', error: err.message });
+    }
+
+}
 
 
 module.exports = {
@@ -240,4 +323,8 @@ module.exports = {
     updatePassword,
     updateEmail,
     updateUsername,
+    updateCompany,
+    updateCompanyCategory,
+    updateCompanyWebsite,
+    deleteAcc
 };

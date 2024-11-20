@@ -6,7 +6,7 @@ const cloudinary = require('../config/cloudinary.config');
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'applicant_uploads', // Folder in your Cloudinary account
+        folder: 'it-job-portal_uploads', // Folder in your Cloudinary account
         allowed_formats: ['jpg', 'png', 'jpeg'], // Specify allowed file formats
     },
 });

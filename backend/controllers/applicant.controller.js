@@ -399,7 +399,7 @@ const deleteAccount = async (req, res) => {
         return res.status(200).json({ message: 'User and related images Deleted ' });
     } catch (err) {
         console.error('Error deleting user:', err);
-        return res.status(500).json({ message: 'Error deletign user', error: err.message });
+        return res.status(500).json({ message: 'Error deleting user', error: err.message });
     }
 };
 
