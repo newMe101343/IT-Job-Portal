@@ -26,14 +26,11 @@ async function generateAccessAndRefreshToken(_id) {
 const registerApplicant = async (req, res) => {
     const { name, username, email, password } = req.body;
     const profilePicture = req.file?.path;
-    console.log(req.file?.path)
-    console.log(req.file?.filename)
+    // console.log(req.file?.path)
+    // console.log(req.file?.filename)
     console.log("Request received for applicant registration");
 
     if (!name || !username || !email || !password) {
-        console.log(req.body);
-        console.log(req.headers);
-
         return res.status(400).json({ message: `'All fields are required'` });
     }
 
@@ -57,7 +54,7 @@ const registerApplicant = async (req, res) => {
 
         await newApplicant.save();
 
-        console.log(`New applicant registered: ${newApplicant}`);
+        // console.log(`New applicant registered: ${newApplicant}`);
         res.status(201).json({
             message: 'Applicant registered successfully!',
             applicant: { newApplicant },
@@ -160,8 +157,7 @@ const fetchApplicantDetails = async (req, res) => {
             console.log("No token found");
             return res.status(400).json({ message: 'No refresh token provided' });
         }
-
-        console.log("Received token:", token); // Log the token
+        // console.log("Received token:", token);
 
         // Find the user by the refresh token
         const user = await Applicant.findOne({ refreshToken: token });

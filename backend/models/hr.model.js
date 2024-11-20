@@ -72,4 +72,5 @@ hrSchema.methods.generateRefreshToken = function () {
     return generateRefreshToken(this);
 };
 
-module.exports = mongoose.model("HR", hrSchema);
+const HR = mongoose.models.HR || mongoose.model("HR", hrSchema);
+module.exports = HR;

@@ -1,4 +1,4 @@
-const HR = require('../models/HR.model');
+const HR = require('../models/hr.model');
 const jwt = require('jsonwebtoken');
 const bcryptjs = require('bcryptjs');
 const cloudinary = require('../config/cloudinary.config');

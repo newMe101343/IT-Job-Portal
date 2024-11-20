@@ -94,4 +94,5 @@ applicantSchema.methods.generateRefreshToken = function () {
     return generateRefreshToken(this);
 };
 
-module.exports = mongoose.model("Applicant", applicantSchema);
+const Applicant = mongoose.model.Applicant || mongoose.model("Applicant", applicantSchema);
+module.exports = Applicant

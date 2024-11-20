@@ -4,8 +4,9 @@ const cors = require('cors');
 const connectDB = require('./db/connect');
 const applicant = require('./routes/applicant.route'); 
 const HR = require('./routes/hr.route')
+const job = require('./routes/job.route');
 const multer = require('multer');
-const upload = multer(); // Memory storage (no disk save)
+const upload = multer(); 
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -15,22 +16,23 @@ const corsOptions = {
     origin: 'http://localhost:3000', // Allow requests only from this origin
     credentials: true, // To include cookies in requests
 };
-app.use(cors(corsOptions)); // Use the customized CORS options
 
+// Middlewares
+app.use(cors(corsOptions)); // Use the customized CORS options
 // Middleware to parse JSON bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
+app.use(express.static('public'));
 app.use(cookieParser());
 
 
 // Connecting MongoDB
 connectDB();
 
-// Applicant middleware for routing
+// Routes
 app.use('/applicant', applicant);
 app.use('/HR', HR);
+app.use('/job', job);
 
 app.get('/', (req, res) => {
     res.json({ message: 'Backend connected successfully' });
