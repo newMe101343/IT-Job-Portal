@@ -1,4 +1,5 @@
 const HR = require('../models/hr.model');
+const job = require("../models/job.model");
 const jwt = require('jsonwebtoken');
 const bcryptjs = require('bcryptjs');
 const cloudinary = require('../config/cloudinary.config');
@@ -30,7 +31,7 @@ const registerHR = async (req, res) => {
     const { name, username, email, password } = req.body;
     const profilePicture = req.file?.path
     const publicId = req.file?.filename
-    console.log("Request received for HR registration");
+
 
     if (!name || !username || !email || !password) {
         return res.status(400).json({ message: 'All fields are required' });
@@ -62,7 +63,7 @@ const registerHR = async (req, res) => {
             HR: { newHR },
         });
     } catch (error) {
-        console.error('Error registering HR:', error);
+        // console.error('Error registering HR:', error);
         res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }
 };
@@ -72,15 +73,13 @@ const signIn = async (req, res) => {
     const { email, password } = req.body;
     console.log(email + password);
 
-
     try {
         if (!email || !password) {
             return res.status(400).json({ message: "Email and password are required" });
         }
 
-
         const user = await HR.findOne({ email })
-        console.log(user);
+        // console.log(user);
         if (!user) {
             return res.status(400).json({ message: `User with ${email} not registered` })
         }
@@ -107,7 +106,7 @@ const signIn = async (req, res) => {
             .json({ message: "Sign in successfull", user, refreshToken, accessToken })
 
     } catch (error) {
-        console.error('Error sigining HR:', error);
+        // console.error('Error sigining HR:', error);
         res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }
 }
@@ -152,8 +151,6 @@ const logout = async (req, res) => {
 
 //fetch user details
 const fetchHRDetails = async (req, res) => {
-
-
     try {
         // Get the token from the cookies
         const token = req.cookies?.refreshToken;
@@ -162,7 +159,6 @@ const fetchHRDetails = async (req, res) => {
             console.log("No token found");
             return res.status(400).json({ message: 'No refresh token provided' });
         }
-
 
         // Find the user by the refresh token
         const user = await HR.findOne({ refreshToken: token });
@@ -295,23 +291,25 @@ const deleteAcc = async (req, res) => {
             console.log('Cloudinary Deletion Result:', result);
         }
 
+        // Delete all jobs related to this HR
+        await job.deleteMany({ hrId: user._id });
+
         await HR.deleteOne({ refreshToken: token })
+
         const cookieOptions = {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
             path: '/', // Explicit path
         };
-
         res.clearCookie('refreshToken', cookieOptions);
         res.clearCookie('accessToken', cookieOptions);
 
-        return res.status(200).json({ message: 'User and related images Deleted ' });
+        return res.status(200).json({ message: 'User and all related data deleted successfully ' });
     } catch (err) {
         console.error('Error deleting user:', err);
         return res.status(500).json({ message: 'Error deleting user', error: err.message });
     }
-
 }
 
 
