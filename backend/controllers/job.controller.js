@@ -4,23 +4,25 @@ const job = require("../models/job.model");
 const HR = require("../models/hr.model");
 const Applicant = require("../models/applicant.model");
 
-// Create a job posting
+//create job post
 const createJobPost = async (req, res) => {
     try {
-        const { title, description, requirements, techStack, requiredExperience } = req.body;
+        let { title, description, requirements, techStack, requiredExperience } = req.body;
 
+        // Check if all required fields are provided
         if (!title || !description || !requirements || !techStack || !requiredExperience) {
-            res.status(400).json({ message: "All fields are required" })
+            return res.status(400).json({ message: "All fields are required" });
         }
 
-        const token = req.cookies?.refreshToken
-        const hr = await HR.findOne({ refreshToken: token })
+        const token = req.cookies?.refreshToken;
+        const hr = await HR.findOne({ refreshToken: token });
 
+        // Check if HR is found
         if (!hr) {
-            return res.status(404).json({ message: "No HR signed-in found" })
+            return res.status(404).json({ message: "No HR signed-in found" });
         }
 
-        // Create a new job
+        // Create a new job posting
         const newJob = await job.create({
             title,
             description,
@@ -32,14 +34,20 @@ const createJobPost = async (req, res) => {
 
         await newJob.save();
 
+        // Add the new job posting to HR's job postings
         hr.jobPostings.push(newJob._id);
         await hr.save();
 
-        res.status(201).json({ message: "Job posted successfully", newJob });
+        // Send the successful response and stop further code execution
+        return res.status(201).json({ message: "Job posted successfully", newJob });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.log(error.message);
+        
+        // Send error response in case of failure
+        return res.status(500).json({ error: error.message });
     }
 };
+
 
 // delete job pasting
 const deleteJobPost = async (req, res) => {
@@ -54,6 +62,8 @@ const deleteJobPost = async (req, res) => {
         }
 
         const token = req.cookies?.refreshToken;
+        console.log(token);
+        
         const hr = await HR.findOne({ refreshToken: token })
 
         if (!hr) {
@@ -139,10 +149,41 @@ const getAllJobs = async (req, res) => {
     }
 };
 
+//HR all jobs
+const getJobsByHR = async (req, res) => {
+    try {
+        // Extract refreshToken from cookies
+        const { refreshToken } = req.cookies;
+
+        if (!refreshToken) {
+            return res.status(401).json({ message: "No refresh token provided" });
+        }
+
+        // Find HR by refreshToken
+        const hr = await HR.findOne({ refreshToken });
+        if (!hr) {
+            return res.status(404).json({ message: "HR not found" });
+        }
+
+        // Fetch all jobs listed by this HR
+        const jobs = await job.find({ hrId: hr._id });
+
+
+        // Return array of job objects
+        return res.status(200).json(jobs);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Error fetching jobs", error: err.message });
+    }
+};
+
+
+
 module.exports = {
     createJobPost,
     deleteJobPost,
     updateJobPost,
     getJobPost,
     getAllJobs,
+    getJobsByHR
 }
