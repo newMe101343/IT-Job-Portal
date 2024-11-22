@@ -148,7 +148,7 @@ const Profile = () => {
     }
 
     async function handleUpdateGitHubClick() {
-        const response = await fetch("http://localhost:5000/applicant/updateGitHub", {
+        const response = await fetch("http://localhost:5000/applicant/updateDetails", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
@@ -164,7 +164,7 @@ const Profile = () => {
     }
 
     async function handleUpdateLeetcodeClick() {
-        const response = await fetch("http://localhost:5000/applicant/updateLeetcode", {
+        const response = await fetch("http://localhost:5000/applicant/updateDetails", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
@@ -180,7 +180,7 @@ const Profile = () => {
     }
 
     async function handleUpdateLinkedInClick() {
-        const response = await fetch("http://localhost:5000/applicant/updateLinkedIn", {
+        const response = await fetch("http://localhost:5000/applicant/updateDetails", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
@@ -196,7 +196,7 @@ const Profile = () => {
     }
 
     async function handleUpdateStackOverflowClick() {
-        const response = await fetch("http://localhost:5000/applicant/updateStackOverflow", {
+        const response = await fetch("http://localhost:5000/applicant/updateDetails", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
@@ -212,7 +212,7 @@ const Profile = () => {
     }
 
     async function handleUpdateTwitterClick() {
-        const response = await fetch("http://localhost:5000/applicant/updateTwitter", {
+        const response = await fetch("http://localhost:5000/applicant/updateDetails", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
@@ -244,7 +244,7 @@ const Profile = () => {
     }
 
     async function handleUpdateBachelorsClick() {
-        const response = await fetch("http://localhost:5000/applicant/updateBachelors", {
+        const response = await fetch("http://localhost:5000/applicant/updateDetails", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
@@ -260,7 +260,7 @@ const Profile = () => {
     }
 
     async function handleUpdateMastersClick() {
-        const response = await fetch("http://localhost:5000/applicant/updateMasters", {
+        const response = await fetch("http://localhost:5000/applicant/updateDetails", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",

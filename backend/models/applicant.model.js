@@ -31,12 +31,15 @@ const applicantSchema = new mongoose.Schema({
         type: String,
         default: "https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg",
     },
-    degree: {
+    bachelors: {
         type: String,
-        default: null,
-        trim: true,
-        enum: ["Bachlor", "Master"]
+        default: null
     },
+     masters: {
+        type: String,
+        default: null
+    },
+    
     techStack: {
         type: [String],
         default: []

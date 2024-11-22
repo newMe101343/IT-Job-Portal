@@ -229,6 +229,23 @@ const updateUsername = async (req, res) => {
     }
 };
 
+//Update Experience
+const updateExperience = async (req, res) => {
+    try {
+        const { newExperience } = req.body;
+        const token = req.cookies?.refreshToken;
+        const user = await Applicant.findOne({ refreshToken: token });
+
+        user.experience = newExperience;
+        await user.save();
+
+        return res.status(200).json({ message: 'Experience updated successfully.' });
+    } catch (err) {
+        console.error('Error updating Exp:', err);
+        return res.status(500).json({ message: 'Error updating Exp.', error: err.message });
+    }
+};
+
 // update GitHub, Leetcode, Twitter, StackOverflow, LinkedIn, Experience and Degree Details
 const updateDetails = async (req, res) => {
     try {
@@ -238,20 +255,23 @@ const updateDetails = async (req, res) => {
             return res.status(404).json({ messsage: "Applicant Not Found || Not Authenticated" })
         }
 
-        const { GitHub, Leetcode, Twitter, StackOverflow, LinkedIn, experience, degree } = req.body;
+        const { newGitHub, newLeetcode, newTwitter, newStackOverflow, newLinkedIn, newBachelors , newMasters } = req.body;
+        
 
-        if (GitHub) { applicant.GitHub = GitHub }
-        if (Leetcode) { applicant.Leetcode = Leetcode }
-        if (Twitter) { applicant.Twitter = Twitter }
-        if (StackOverflow) { applicant.StackOverflow = StackOverflow }
-        if (LinkedIn) { applicant.LinkedIn = LinkedIn }
-        if (experience) { applicant.experience = experience }
-        if (degree) { applicant.degree = degree }
+        if (newGitHub) { applicant.GitHub = newGitHub }
+        if (newLeetcode) { applicant.LeetCode = newLeetcode }
+        if (newTwitter) { applicant.Twitter = newTwitter }
+        if (newStackOverflow) { applicant.StackOverflow = newStackOverflow }
+        if (newLinkedIn) { applicant.LinkedIn = newLinkedIn }
+        if (newBachelors) { applicant.bachelors = newBachelors }
+        if (newMasters) { applicant.masters = newMasters }
 
         await applicant.save();
         return res.status(200).json({ message: 'Applicant details Updated successfully', applicant });
 
     } catch (err) {
+        console.log(err.message);
+        
         return res.status(500).json({ message: 'Error Updating Applicant details', error: err.message });
     }
 }
@@ -322,5 +342,6 @@ module.exports = {
     updateUsername,
     deleteAccount,
     addSkill,
+    updateExperience
 };
 
