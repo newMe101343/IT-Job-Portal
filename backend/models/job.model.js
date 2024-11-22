@@ -35,6 +35,12 @@ const jobSchema = new mongoose.Schema({
             ref: "Applicant"
         }
     ],
+    approvedApplicants: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Applicant"
+        }
+    ],
     createdAt: {
         type: Date,
         default: Date.now

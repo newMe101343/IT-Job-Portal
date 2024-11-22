@@ -255,13 +255,100 @@ const unapplyJob = async (req, res) => {
         applicant.appliedJobs = applicant.appliedJobs.filter(appliedJobId => appliedJobId.toString() !== jobId);
         await applicant.save();
 
-        // Respond with success
         res.status(200).json({ message: "Job application withdrawn successfully" });
     } catch (error) {
         console.error("Error withdrawing job application:", error);
         res.status(500).json({ message: "An error occurred while withdrawing the job application" });
     }
 };
+
+const getAllAppliedApplicants = async (req, res) => {
+    try {
+        const jobId = req.params.id;
+        const job = await Job.findById(jobId)
+        if (!job) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        const token = req.cookies?.refreshToken
+        const hr = await HR.findOne({ refreshToken: token })
+        if (!hr) {
+            return res.status(404).json({ message: "Not authenticated" })
+        }
+
+        if (hr._id.toString() !== hr._id.toString()) {
+            return res.status(401).json({ message: "Unauthorized request" })
+        }
+
+        const currentJob = await Job.findById(jobId).populate("applicants", "name email techStack experience profilePicture GitHub LinkedIn Twitter StackOverflow LeetCode");
+        // console.log(currentJob)
+
+        res.status(200).json({ applicants: currentJob.applicants });
+    } catch (error) {
+        // console.error("Error fetching applicants:", error);
+        res.status(500).json({ message: "An error occurred while fetching applicants" });
+    }
+}
+
+
+const approveOrRejectApplicant = async (req, res) => {
+    try {
+        const { jobId, applicantId } = req.params; 
+        const { action } = req.body; // Action: "approve" or "reject"
+
+        if (!jobId || !applicantId || !action) {
+            return res.status(400).json({ message: "Job ID, Applicant ID, and action are required" });
+        }
+
+        const job = await Job.findById(jobId);
+        if (!job) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        const applicant = await Applicant.findById(applicantId);
+        if (!applicant) {
+            return res.status(404).json({ message: "Applicant not found" });
+        }
+
+        if (!job.applicants.includes(applicantId)) {
+            return res.status(400).json({ message: "Applicant has not applied for this job" });
+        }
+
+        const token = req.cookies?.refreshToken
+        const hr = await HR.findOne({ refreshToken: token })
+        if (!hr) {
+            return res.status(404).json({ message: "Not authenticated" })
+        }
+
+        if (hr._id.toString() !== hr._id.toString()) {
+            return res.status(401).json({ message: "Unauthorized request" })
+        }
+
+        if (action === "approve") {
+            // Approve: Add the applicant to approvedApplicants
+            job.approvedApplicants = job.approvedApplicants || [];
+            job.approvedApplicants.push(applicantId);
+
+            // Remove the applicant from the job's applicants list
+            job.applicants = job.applicants.filter(id => id.toString() !== applicantId);
+            await job.save();
+
+            return res.status(200).json({ message: "Applicant approved successfully" });
+        } else if (action === "reject") {
+            // Reject: Remove the applicant from the job's applicants list
+            job.applicants = job.applicants.filter(id => id.toString() !== applicantId);
+            await job.save();
+
+            return res.status(200).json({ message: "Applicant rejected successfully" });
+        } else {
+            return res.status(400).json({ message: "Invalid action. Use 'approve' or 'reject'" });
+        }
+    } catch (error) {
+        console.error("Error applying or rejecting applicant:", error);
+        res.status(500).json({ message: "An error occurred while processing the request" });
+    }
+};
+
 
 
 
@@ -274,4 +361,6 @@ module.exports = {
     getJobsByHR,
     applyJob,
     unapplyJob,
+    getAllAppliedApplicants,
+    approveOrRejectApplicant,
 }
