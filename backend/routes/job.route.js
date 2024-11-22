@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { createJobPost, deleteJobPost, updateJobPost, getJobPost, getAllJobs, getJobsByHR, applyJob, unapplyJob, getAllAppliedApplicants, approveOrRejectApplicant } = require('../controllers/job.controller');
+const { createJobPost, deleteJobPost, updateJobPost, getJobPost, getAllJobs, getJobsByHR, applyJob, unapplyJob, getAllAppliedApplicants, approveOrRejectApplicant, getEligibleJobs } = require('../controllers/job.controller');
 
 router.post("/createJobPost", createJobPost)
 router.post("/deleteJobPost/:id", deleteJobPost)
@@ -13,6 +13,7 @@ router.post("/applyJob/:id", applyJob)
 router.post("/unapplyJob/:id", unapplyJob)
 
 router.get("/getAllAppliedApplicants/:id", getAllAppliedApplicants)
+router.get("/getEligibleJobs/", getEligibleJobs)
 
 router.post("/approveOrRejectApplicant/:jobId/applicants/:applicantId/", approveOrRejectApplicant)
 

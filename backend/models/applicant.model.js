@@ -31,13 +31,11 @@ const applicantSchema = new mongoose.Schema({
         type: String,
         default: "https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg",
     },
-    bachelors: {
+    degree: {
         type: String,
-        default: null
-    },
-    masters: {
-        type: String,
-        default: null
+        default: null,
+        trim: true,
+        enum: ["Bachlor", "Master"]
     },
     techStack: {
         type: [String],
@@ -45,7 +43,8 @@ const applicantSchema = new mongoose.Schema({
     },
     experience: {
         type: Number,
-        default: null
+        default: null,
+        trim: true,
     },
     GitHub: {
         type: String,

@@ -7,10 +7,10 @@ const Applicant = require("../models/applicant.model");
 //create Job post
 const createJobPost = async (req, res) => {
     try {
-        let { title, description, requirements, techStack, requiredExperience } = req.body;
+        let { title, description, requirements, techStack, requiredExperience, degree } = req.body;
 
         // Check if all required fields are provided
-        if (!title || !description || !requirements || !techStack || !requiredExperience) {
+        if (!title || !description || !requirements || !techStack || !requiredExperience || !degree) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -29,6 +29,7 @@ const createJobPost = async (req, res) => {
             requirements,
             techStack,
             requiredExperience,
+            degree,
             hrId: hr._id,
         });
 
@@ -91,7 +92,7 @@ const updateJobPost = async (req, res) => {
             return res.status(404).json({ message: "Job not found" });
         }
 
-        const { title, description, requirements, techStack, requiredExperience } = req.body;
+        const { title, description, requirements, techStack, requiredExperience, degree } = req.body;
 
         const token = req.cookies?.refreshToken;
         const hr = await HR.findOne({ refreshToken: token })
@@ -109,6 +110,7 @@ const updateJobPost = async (req, res) => {
         if (requirements) currentJob.requirements = requirements
         if (techStack) currentJob.techStack = techStack
         if (requiredExperience) currentJob.requiredExperience = requiredExperience
+        if (degree) currentJob.degree = degree
 
         await currentJob.save();
         return res.status(200).json({ message: 'Job Updated successfully ' });
@@ -280,7 +282,7 @@ const getAllAppliedApplicants = async (req, res) => {
             return res.status(401).json({ message: "Unauthorized request" })
         }
 
-        const currentJob = await Job.findById(jobId).populate("applicants", "name email techStack experience profilePicture GitHub LinkedIn Twitter StackOverflow LeetCode");
+        const currentJob = await Job.findById(jobId).populate("applicants", "name email techStack experience profilePicture masters bachelors GitHub LinkedIn Twitter StackOverflow LeetCode");
         // console.log(currentJob)
 
         res.status(200).json({ applicants: currentJob.applicants });
@@ -293,7 +295,7 @@ const getAllAppliedApplicants = async (req, res) => {
 
 const approveOrRejectApplicant = async (req, res) => {
     try {
-        const { jobId, applicantId } = req.params; 
+        const { jobId, applicantId } = req.params;
         const { action } = req.body; // Action: "approve" or "reject"
 
         if (!jobId || !applicantId || !action) {
@@ -349,8 +351,29 @@ const approveOrRejectApplicant = async (req, res) => {
     }
 };
 
+// getAllEligibleJobs
+const getEligibleJobs = async (req, res) => {
+    try {
+        const token = req.cookies?.refreshToken;
+        const applicant = await Applicant.findOne({ refreshToken: token });
 
+        if (!applicant) {
+            return res.status(404).json({ message: "Applicant not found" });
+        }
 
+        // Fetch jobs that match the applicant's qualifications
+        const eligibleJobs = await Job.find({
+            requiredExperience: { $lte: applicant.experience },
+            techStack: { $all: applicant.techStack },
+            degree: { $regex: new RegExp(applicant.degree, "i") }, // Case-insensitive match
+        });
+
+        res.status(200).json({ eligibleJobs });
+    } catch (error) {
+        // console.error("Error fetching eligible jobs:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
 
 module.exports = {
     createJobPost,
@@ -363,4 +386,5 @@ module.exports = {
     unapplyJob,
     getAllAppliedApplicants,
     approveOrRejectApplicant,
+    getEligibleJobs,
 }

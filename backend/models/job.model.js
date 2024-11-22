@@ -24,6 +24,12 @@ const jobSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+    degree: {
+        type: String,
+        required: true,
+        trim: true,
+        enum: ["Bachlor", "Master"]
+    },
     hrId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "HR",
