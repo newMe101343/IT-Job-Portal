@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const job = require("../models/job.model");
+const Job = require("../models/job.model");
 const HR = require("../models/hr.model");
 const Applicant = require("../models/applicant.model");
 
-//create job post
+//create Job post
 const createJobPost = async (req, res) => {
     try {
         let { title, description, requirements, techStack, requiredExperience } = req.body;
@@ -22,8 +22,8 @@ const createJobPost = async (req, res) => {
             return res.status(404).json({ message: "No HR signed-in found" });
         }
 
-        // Create a new job posting
-        const newJob = await job.create({
+        // Create a new Job posting
+        const newJob = await Job.create({
             title,
             description,
             requirements,
@@ -34,7 +34,7 @@ const createJobPost = async (req, res) => {
 
         await newJob.save();
 
-        // Add the new job posting to HR's job postings
+        // Add the new Job posting to HR's Job postings
         hr.jobPostings.push(newJob._id);
         await hr.save();
 
@@ -42,18 +42,18 @@ const createJobPost = async (req, res) => {
         return res.status(201).json({ message: "Job posted successfully", newJob });
     } catch (error) {
         console.log(error.message);
-        
+
         // Send error response in case of failure
         return res.status(500).json({ error: error.message });
     }
 };
 
 
-// delete job pasting
+// delete Job pasting
 const deleteJobPost = async (req, res) => {
     try {
         const jobID = req.params.id
-        const currentJob = await job.findOne({ _id: jobID })
+        const currentJob = await Job.findOne({ _id: jobID })
         // console.log(req.params.id)
         // console.log(currentJob)
 
@@ -63,7 +63,7 @@ const deleteJobPost = async (req, res) => {
 
         const token = req.cookies?.refreshToken;
         console.log(token);
-        
+
         const hr = await HR.findOne({ refreshToken: token })
 
         if (!hr) {
@@ -74,7 +74,7 @@ const deleteJobPost = async (req, res) => {
             return res.status(403).json({ message: "Unauthorized request" })
         }
 
-        await job.deleteOne({ _id: jobID })
+        await Job.deleteOne({ _id: jobID })
         return res.status(200).json({ message: 'Job deleted successfully ' });
 
     } catch (err) {
@@ -86,7 +86,7 @@ const updateJobPost = async (req, res) => {
     try {
         const jobID = req.params.id;
 
-        const currentJob = await job.findOne({ _id: jobID })
+        const currentJob = await Job.findOne({ _id: jobID })
         if (!currentJob) {
             return res.status(404).json({ message: "Job not found" });
         }
@@ -122,22 +122,22 @@ const getJobPost = async (req, res) => {
     try {
         const jobID = req.params.id;
 
-        const currentJob = await job.findOne({ _id: jobID }).populate('hrId', 'name');
+        const currentJob = await Job.findOne({ _id: jobID }).populate('hrId', 'name');
 
         if (!currentJob) {
             return res.status(404).json({ message: "Job not found" });
         }
 
-        return res.status(200).json({ job: currentJob });
+        return res.status(200).json({ Job: currentJob });
     } catch (err) {
-        return res.status(500).json({ message: "Error fetching job", error: err.message });
+        return res.status(500).json({ message: "Error fetching Job", error: err.message });
     }
 };
 
 // get all jobs 
 const getAllJobs = async (req, res) => {
     try {
-        const allJobs = await job.find().populate('hrId', 'name');
+        const allJobs = await Job.find().populate('hrId', 'name');
 
         if (!allJobs || allJobs.length === 0) {
             return res.status(404).json({ message: "No jobs found" });
@@ -166,14 +166,100 @@ const getJobsByHR = async (req, res) => {
         }
 
         // Fetch all jobs listed by this HR
-        const jobs = await job.find({ hrId: hr._id });
+        const jobs = await Job.find({ hrId: hr._id });
 
 
-        // Return array of job objects
+        // Return array of Job objects
         return res.status(200).json(jobs);
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Error fetching jobs", error: err.message });
+    }
+};
+
+// Apply Job
+const applyJob = async (req, res) => {
+    try {
+        const jobId = req.params.id;
+        if (!jobId) {
+            return res.status(404).json({ message: "Job ID is required" });
+        }
+
+        const token = req.cookies?.refreshToken;
+        if (!token) {
+            return res.status(401).json({ message: "Not authenticated" });
+        }
+
+        const applicant = await Applicant.findOne({ refreshToken: token });
+        if (!applicant) {
+            return res.status(404).json({ message: "No applicant found" });
+        }
+
+        const job = await Job.findById(jobId);
+        if (!job) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        // Check if the applicant has already applied for the job
+        if (applicant.appliedJobs.includes(jobId)) {
+            return res.status(400).json({ message: "You have already applied for this job" });
+        }
+
+        job.applicants.push(applicant._id);
+        await job.save();
+
+        applicant.appliedJobs.push(jobId);
+        await applicant.save();
+
+        res.status(200).json({ message: "Job application successful" });
+    } catch (error) {
+        console.error("Error applying for job:", error);
+        res.status(500).json({ message: "An error occurred while applying for the job" });
+    }
+};
+
+// Unapply Job
+const unapplyJob = async (req, res) => {
+    try {
+        const jobId = req.params.id;
+        if (!jobId) {
+            return res.status(404).json({ message: "Job ID is required" });
+        }
+
+        const token = req.cookies?.refreshToken;
+        if (!token) {
+            return res.status(401).json({ message: "Not authenticated" });
+        }
+
+        const applicant = await Applicant.findOne({ refreshToken: token });
+        if (!applicant) {
+            return res.status(404).json({ message: "No applicant found" });
+        }
+
+        const job = await Job.findById(jobId);
+        if (!job) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        // Check if the applicant has applied for the job
+        if (!applicant.appliedJobs.includes(jobId)) {
+            return res.status(400).json({ message: "You have not applied for this job" });
+        }
+
+        // Remove the applicant's ID from the job's applicants array
+        job.applicants = job.applicants.filter(applicantId => applicantId.toString() !== applicant._id.toString());
+        // console.log(job.applicants)
+        await job.save();
+
+        // Remove the job ID from the applicant's appliedJobs array
+        applicant.appliedJobs = applicant.appliedJobs.filter(appliedJobId => appliedJobId.toString() !== jobId);
+        await applicant.save();
+
+        // Respond with success
+        res.status(200).json({ message: "Job application withdrawn successfully" });
+    } catch (error) {
+        console.error("Error withdrawing job application:", error);
+        res.status(500).json({ message: "An error occurred while withdrawing the job application" });
     }
 };
 
@@ -185,5 +271,7 @@ module.exports = {
     updateJobPost,
     getJobPost,
     getAllJobs,
-    getJobsByHR
+    getJobsByHR,
+    applyJob,
+    unapplyJob,
 }

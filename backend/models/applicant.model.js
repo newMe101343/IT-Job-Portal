@@ -63,11 +63,16 @@ const applicantSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    LeetCode : {
+    LeetCode: {
         type: String,
         default: null
     },
-    
+    appliedJobs: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Job"
+        }
+    ],
     refreshToken: {
         type: String,
         default: null
