@@ -37,6 +37,9 @@ app.use('/job', job);
 app.get('/', (req, res) => {
     res.json({ message: 'Backend connected successfully' });
 });
+app.get('/api', (req, res) => {
+    res.json({ message: 'Backend connected successfully' });
+});
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
