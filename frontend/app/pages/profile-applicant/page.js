@@ -728,14 +728,14 @@ const Profile = () => {
 
                         </div>
 
-                        <div className="bg-gray-200 dark:bg-gray-900 p-4 pb-3 mx-8 rounded-md mt-6 mb-6 flex space-x-4">
+                        <div className="bg-gray-200 dark:bg-gray-900  p-4 pb-3 mx-8 rounded-md mt-6 mb-6 flex space-x-4">
                             <p className="w-32 mt-1 font-semibold">Tech Stack</p>
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             <p className="mt-1">{user.techStack?.join(', ')}</p>
 
                             {ShowAddSkill && (
-                                <select>
-                                    <option value="" disabled>Select a Skill</option>
+                                <select className="text-black" onChange={(e)=> setNewSkill(e.target.value)}>
+                                    <option value="" >Select a Skill</option>
                                     <option value="JavaScript">JavaScript</option>
                                     <option value="Java">Java</option>
                                     <option value="Python">Python</option>

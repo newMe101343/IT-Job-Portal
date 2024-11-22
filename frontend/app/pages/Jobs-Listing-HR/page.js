@@ -67,7 +67,11 @@ function JobsListing() {
       setNewTechStack([]);
       setNewTitle("");
       fetchJobsByHR(); // Refresh job listings after adding a new job
-    } else {
+    }
+    else if(NewDescription=="" || NewExperience=="" ||NewRequirements=="" ||NewTechStack=="" ||NewTitle==""  ){
+      toast.warning("Please fill out all the fields")
+    }
+    else {
       toast.error("Failed to create job listing");
     }
   }

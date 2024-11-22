@@ -97,8 +97,8 @@ function Sidebar() {
     };
 
     return (
-        <div className="inline-block fixed border-r-2 border-neutral-100 dark:border-black">
-            <aside className="flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-gray-200 border-r rtl:border-r-0 rtl:border-l dark:bg-gray-950 dark:border-gray-700">
+        <div className="inline-block fixed border-r-2 border-neutral-100 dark:border-black dark:bg-gray-950 ">
+            <aside className="flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-gray-200 dark:text-white  border-r rtl:border-r-0 rtl:border-l dark:bg-gray-950 dark:border-gray-700">
                 <div className="flex flex-col justify-between flex-1">
                     <nav>
                         <Image
@@ -166,7 +166,7 @@ function Sidebar() {
 
 
                         <Link
-                            href="/"
+                            href="/pages/settings"
                             className="flex items-center px-4 py-2 mt-5 text-black transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-200"
                         >
                             <span className="mx-4 font-medium">Settings</span>
