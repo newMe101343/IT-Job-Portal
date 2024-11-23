@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Job = require("../models/job.model");
 const HR = require("../models/hr.model");
-const Applicant = require("../models/applicant.model");
+const Applicant = require("../models/applicant.model")
+
 
 const createJobPost = async (req, res) => {
     try {
@@ -54,7 +55,6 @@ const deleteJobPost = async (req, res) => {
         }
 
         const token = req.cookies?.refreshToken;
-        console.log(token);
 
         const hr = await HR.findOne({ refreshToken: token })
 
@@ -174,6 +174,7 @@ const getJobsByHR = async (req, res) => {
 const applyJob = async (req, res) => {
     try {
         const jobId = req.params.id;
+        
         if (!jobId) {
             return res.status(404).json({ message: "Job ID is required" });
         }
@@ -192,6 +193,7 @@ const applyJob = async (req, res) => {
         if (!job) {
             return res.status(404).json({ message: "Job not found" });
         }
+        
 
         // Check if the applicant has already applied for the job
         if (applicant.appliedJobs.includes(jobId)) {
@@ -342,29 +344,32 @@ const approveOrRejectApplicant = async (req, res) => {
     }
 };
 
-// getAllEligibleJobs
 const getEligibleJobs = async (req, res) => {
     try {
-        const token = req.cookies?.refreshToken;
-        const applicant = await Applicant.findOne({ refreshToken: token });
-
-        if (!applicant) {
-            return res.status(404).json({ message: "Applicant not found" });
-        }
-
-        // Fetch jobs that match the applicant's qualifications
-        const eligibleJobs = await Job.find({
-            requiredExperience: { $lte: applicant.experience },
-            techStack: { $all: applicant.techStack },
-            degree: { $regex: new RegExp(applicant.degree, "i") }, // Case-insensitive match
-        });
-
-        res.status(200).json({ eligibleJobs });
+      const token = req.cookies?.refreshToken;
+      const applicant = await Applicant.findOne({ refreshToken: token });
+  
+      if (!applicant) {
+        return res.status(404).json({ message: "Applicant not found" });
+      }
+  
+      // Fetch eligible jobs along with HR information (populating hrId)
+      const eligibleJobs = await Job.find({
+        requiredExperience: { $lte: applicant.experience },
+        techStack: { $in: applicant.techStack },
+        requirements: { $regex: new RegExp(applicant.bachelors, "i") }, // Case-insensitive match for requirements
+      })
+        .populate('hrId')  // Populate the HR info from the HR collection
+        .exec();
+  
+      // Return both jobs and HR info
+      res.status(200).json({ eligibleJobs });
     } catch (error) {
-        // console.error("Error fetching eligible jobs:", error);
-        res.status(500).json({ message: "Server error" });
+      console.error("Error fetching eligible jobs:", error);
+      res.status(500).json({ message: "Server error" });
     }
-};
+  };
+  
 
 module.exports = {
     createJobPost,

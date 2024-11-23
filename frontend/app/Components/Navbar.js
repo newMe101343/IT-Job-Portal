@@ -60,7 +60,7 @@ export default function Navbar() {
                             <Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-7">Home</Link>
                             <Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-7">About</Link>
                             <Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-7">Dashboard</Link>
-                            <Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-7">Jobs</Link>
+                            <Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-7">Contact Us</Link>
 
                             {/* Conditionally render login/logout links based on 'isLoggedIn' */}
                             {!isLoggedIn &&

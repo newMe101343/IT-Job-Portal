@@ -167,7 +167,6 @@ const fetchApplicantDetails = async (req, res) => {
         }
 
         const { password, ...userDetails } = user._doc; // Exclude password from the response
-        console.log('User found:', userDetails); // Log the user details returned
 
         // Send response
         return res.status(200).json(userDetails);
