@@ -286,6 +286,8 @@ const getAllAppliedApplicants = async (req, res) => {
 }
 
 
+const nodemailer = require('nodemailer');
+
 const approveOrRejectApplicant = async (req, res) => {
     try {
         const { jobId, applicantId } = req.params;
@@ -309,32 +311,61 @@ const approveOrRejectApplicant = async (req, res) => {
             return res.status(400).json({ message: "Applicant has not applied for this job" });
         }
 
-        const token = req.cookies?.refreshToken
-        const hr = await HR.findOne({ refreshToken: token })
+        const token = req.cookies?.refreshToken;
+        const hr = await HR.findOne({ refreshToken: token });
         if (!hr) {
-            return res.status(404).json({ message: "Not authenticated" })
+            return res.status(404).json({ message: "Not authenticated" });
         }
 
         if (hr._id.toString() !== hr._id.toString()) {
-            return res.status(401).json({ message: "Unauthorized request" })
+            return res.status(401).json({ message: "Unauthorized request" });
         }
- 
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail', 
+            auth: {
+                user: process.env.EMAIL_USER, 
+                pass: process.env.EMAIL_PASS, 
+            },
+        });
+
         if (action === "approve") {
-            // Approve: Add the applicant to approvedApplicants
             job.approvedApplicants = job.approvedApplicants || [];
             job.approvedApplicants.push(applicantId);
 
-            // Remove the applicant from the job's applicants list
             job.applicants = job.applicants.filter(id => id.toString() !== applicantId);
             await job.save();
 
-            return res.status(200).json({ message: "Applicant approved successfully" });
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: applicant.email, 
+                subject: 'Application Approved',
+                text: `Dear ${applicant.name},\n\nCongratulations! Your application for the position "${job.title}" has been approved.\n Co-ordinate with ${hr.email} for further details. \nBest regards,\nThe Team`,
+            };
+
+            await transporter.sendMail(mailOptions);
+
+            return res.status(200).json({ message: "Applicant approved successfully and email sent" });
         } else if (action === "reject") {
             // Reject: Remove the applicant from the job's applicants list
             job.applicants = job.applicants.filter(id => id.toString() !== applicantId);
             await job.save();
 
-            return res.status(200).json({ message: "Applicant rejected successfully" });
+            // Remove the job from the applicant's appliedJobs list
+            applicant.appliedJobs = applicant.appliedJobs.filter(job => job.toString() !== jobId);
+            await applicant.save();
+
+            // Send rejection email
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: applicant.email,
+                subject: 'Application Status',
+                text: `Dear ${applicant.name},\n\nThank you for taking the time to apply for the position "${job.title}". After careful consideration, we regret to inform you that we have chosen to proceed with other candidates at this time.\n\nWe truly appreciate your interest in joining our team and encourage you to apply for future opportunities that match your skills and interests. We wish you all the best in your job search and future endeavors.\n\nBest regards,\nThe Team`,
+            };
+
+            await transporter.sendMail(mailOptions);
+
+            return res.status(200).json({ message: "Applicant rejected successfully and email sent" });
         } else {
             return res.status(400).json({ message: "Invalid action. Use 'approve' or 'reject'" });
         }
@@ -343,6 +374,9 @@ const approveOrRejectApplicant = async (req, res) => {
         res.status(500).json({ message: "An error occurred while processing the request" });
     }
 };
+
+
+
 
 const getEligibleJobs = async (req, res) => {
     try {
