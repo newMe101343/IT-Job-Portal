@@ -4,50 +4,41 @@ const Job = require("../models/job.model");
 const HR = require("../models/hr.model");
 const Applicant = require("../models/applicant.model");
 
-//create Job post
 const createJobPost = async (req, res) => {
     try {
-        let { title, description, requirements, techStack, requiredExperience, degree } = req.body;
+        const refreshToken = req.cookies?.refreshToken;
 
-        // Check if all required fields are provided
-        if (!title || !description || !requirements || !techStack || !requiredExperience || !degree) {
-            return res.status(400).json({ message: "All fields are required" });
+        if (!refreshToken) {
+            return res.status(401).json({ message: "Unauthorized: No token provided" });
         }
 
-        const token = req.cookies?.refreshToken;
-        const hr = await HR.findOne({ refreshToken: token });
+        const hr = await HR.findOne({ refreshToken });
 
-        // Check if HR is found
         if (!hr) {
-            return res.status(404).json({ message: "No HR signed-in found" });
+            return res.status(404).json({ message: "HR not found" });
         }
 
-        // Create a new Job posting
+        const { title, description, requirements, techStack, requiredExperience } = req.body;
+
         const newJob = await Job.create({
             title,
             description,
             requirements,
             techStack,
             requiredExperience,
-            degree,
-            hrId: hr._id,
+            hrId: hr._id, // Link the job to HR
         });
 
-        await newJob.save();
-
-        // Add the new Job posting to HR's Job postings
         hr.jobPostings.push(newJob._id);
         await hr.save();
 
-        // Send the successful response and stop further code execution
         return res.status(201).json({ message: "Job posted successfully", newJob });
     } catch (error) {
-        console.log(error.message);
-
-        // Send error response in case of failure
-        return res.status(500).json({ error: error.message });
+        console.error(error.message);
+        return res.status(500).json({ message: "Error creating job post", error: error.message });
     }
 };
+
 
 
 // delete Job pasting
