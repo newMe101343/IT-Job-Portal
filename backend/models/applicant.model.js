@@ -79,6 +79,10 @@ const applicantSchema = new mongoose.Schema({
         type: String,
         default: null
     },
+    otp: {
+        type: Number,
+        default: null
+    },
     isVerified: {
         type: Boolean,
         default: false
