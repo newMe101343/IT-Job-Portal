@@ -74,7 +74,7 @@ function Sidebar() {
 
     // Log out function
     const logOutClick = async () => {
-        try {
+        try {z``
             if (localStorage.getItem("accType") === "applicant") {
                 await fetch("http://localhost:5000/applicant/logout", {
                     method: "POST",
@@ -132,7 +132,7 @@ function Sidebar() {
 
                         {isUserApplicant && (
                             <Link
-                                href="/"
+                                href="/pages/Applied-jobs"
                                 className="flex items-center px-4 py-2 mt-5 text-black transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-200"
                             >
                                 <span className="mx-4 font-medium">Applied Jobs</span>

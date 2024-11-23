@@ -31,7 +31,7 @@ export default function Home() {
             response = await fetch("http://localhost:5000/applicant/findOneApplicant", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              credentials: "include", // Include cookies with the request
+              credentials: "include", 
             });
             data = await response.json();
           } else if (localStorage.getItem("accType") === "recruiter") {

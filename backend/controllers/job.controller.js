@@ -353,11 +353,14 @@ const getEligibleJobs = async (req, res) => {
         return res.status(404).json({ message: "Applicant not found" });
       }
   
+      const appliedJobIds = applicant.appliedJobs.map((job) => job.toString());  // Map to an array of job IDs as strings
+  
       // Fetch eligible jobs along with HR information (populating hrId)
       const eligibleJobs = await Job.find({
         requiredExperience: { $lte: applicant.experience },
         techStack: { $in: applicant.techStack },
         requirements: { $regex: new RegExp(applicant.bachelors, "i") }, // Case-insensitive match for requirements
+        _id: { $nin: appliedJobIds }  // Exclude jobs that the applicant has already applied to
       })
         .populate('hrId')  // Populate the HR info from the HR collection
         .exec();
@@ -366,6 +369,77 @@ const getEligibleJobs = async (req, res) => {
       res.status(200).json({ eligibleJobs });
     } catch (error) {
       console.error("Error fetching eligible jobs:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
+  
+  
+  //applied jobs
+
+  const getJobsAppliedByApplicant = async (req, res) => {
+    try {
+        const token = req.cookies?.refreshToken;
+        if (!token) {
+            return res.status(401).json({ message: "Not authenticated" });
+        }
+
+        const applicant = await Applicant.findOne({ refreshToken: token }).populate({
+            path: "appliedJobs", // Populate applied jobs
+            select: "title description requirements techStack requiredExperience hrId",
+            populate: {
+                path: "hrId", // Populate HR details for each job
+                select: "company_category company"
+            }
+        });
+
+        if (!applicant) {
+            return res.status(404).json({ message: "Applicant not found" });
+        }
+
+        const jobs = applicant.appliedJobs;
+
+        if (!jobs || jobs.length === 0) {
+            return res.status(404).json({ message: "No jobs found for this applicant" });
+        }
+        
+        res.status(200).json({ jobs });
+    } catch (error) {
+        console.error("Error fetching jobs applied by applicant:", error);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+//check job status
+const checkJobStatus = async (req, res) => {
+    try {
+
+        console.log("cxoiujhc"); 
+        
+      const { id } = req.params;
+      const applicantToken = req.cookies?.refreshToken;
+  
+      if (!applicantToken) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+  
+      const applicant = await Applicant.findOne({ refreshToken: applicantToken });
+      if (!applicant) {
+        return res.status(404).json({ message: "Applicant not found" });
+      }
+  
+      const job = await Job.findById(id).populate("approvedApplicants", "name email");
+  
+      if (!job) {
+        return res.status(404).json({ message: "Job not found" });
+      }
+  
+      const isApproved = job.approvedApplicants.some(
+        (app) => app._id.toString() === applicant._id.toString()
+      );
+  
+      res.status(200).json({ status: isApproved ? "Approved" : "Pending" });
+    } catch (error) {
+      console.error("Error checking job status:", error);
       res.status(500).json({ message: "Server error" });
     }
   };
@@ -383,4 +457,7 @@ module.exports = {
     getAllAppliedApplicants,
     approveOrRejectApplicant,
     getEligibleJobs,
+    getAllAppliedApplicants,
+    getJobsAppliedByApplicant,
+    checkJobStatus
 }
