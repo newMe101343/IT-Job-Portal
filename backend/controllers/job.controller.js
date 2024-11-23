@@ -318,7 +318,7 @@ const approveOrRejectApplicant = async (req, res) => {
         if (hr._id.toString() !== hr._id.toString()) {
             return res.status(401).json({ message: "Unauthorized request" })
         }
-
+ 
         if (action === "approve") {
             // Approve: Add the applicant to approvedApplicants
             job.approvedApplicants = job.approvedApplicants || [];
@@ -398,9 +398,7 @@ const getEligibleJobs = async (req, res) => {
 
         const jobs = applicant.appliedJobs;
 
-        if (!jobs || jobs.length === 0) {
-            return res.status(404).json({ message: "No jobs found for this applicant" });
-        }
+        
         
         res.status(200).json({ jobs });
     } catch (error) {
@@ -412,9 +410,7 @@ const getEligibleJobs = async (req, res) => {
 //check job status
 const checkJobStatus = async (req, res) => {
     try {
-
-        console.log("cxoiujhc"); 
-        
+     
       const { id } = req.params;
       const applicantToken = req.cookies?.refreshToken;
   

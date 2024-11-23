@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { FaTools, FaGraduationCap, FaCodeBranch, FaClipboard, FaInfoCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import Link from 'next/link';
 
 export default function JobListingHR({ id, title, description, requirements, techStack, requiredExperience, setJobListings }) {
 
@@ -33,7 +34,7 @@ export default function JobListingHR({ id, title, description, requirements, tec
   }
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out mb-1">
+    <div className="p-6 bg-white mb-4 dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out">
       <div className="flex items-center mb-4">
         <FaClipboard className="mr-2 text-blue-600 text-2xl" />
         <h3 className="font-bold text-3xl text-gray-900 dark:text-white">{title}</h3>
@@ -62,6 +63,7 @@ export default function JobListingHR({ id, title, description, requirements, tec
         >
           Delete
         </button>
+        <Link href={`/pages/getAllApplicants/${id}`} className='px-4 py-2 ml-4 bg-gray-900 border-blue-500 border-2 text-blue-500 rounded-md hover:text-white hover:bg-blue-500 transition duration-300'>Applicants</Link>
       </div>
 
       {ShowPopup && (

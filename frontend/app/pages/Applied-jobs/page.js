@@ -9,7 +9,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 function AppliedJobs() {
   const [appliedJobs, setAppliedJobs] = useState([]); // Initialize as an empty array
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchAppliedJobs = async () => {
@@ -21,30 +20,35 @@ function AppliedJobs() {
             'Content-Type': 'application/json',
           },
         });
-
+  
         if (!response.ok) {
           throw new Error('Failed to fetch applied jobs');
         }
-
-        const data = await response.json();      
-        setAppliedJobs(data.jobs || []);
-
+  
+        // Check if the response body is empty
+        const data = await response.json().catch(() => []); // Fallback to empty array if JSON parsing fails
+  
+        // If data is an array but empty, don't throw an error
+        if (Array.isArray(data) && data.length === 0) {
+          setAppliedJobs([]); // Handle empty response
+        } else {
+          setAppliedJobs(data.jobs || []); // Handle non-empty response
+        }
+  
       } catch (err) {
         console.error(err.message);
-        setError(err.message);
       }
     };
-
+  
     fetchAppliedJobs();
   }, []);
+  
 
   return (
     <div>
       <Sidebar />
       <div className='ml-64 p-3'>
-        {error ? (
-          <div className="text-red-500">Error: {error}</div>
-        ) : (
+        { (
           appliedJobs && appliedJobs.length > 0 ? (
             appliedJobs.map((job) => (
               <AppliedJobCard
@@ -60,7 +64,7 @@ function AppliedJobs() {
               />
             ))
           ) : (
-            <div>No applied jobs found.</div>
+            <div>No Jobs applied for.</div>
           )
         )}
       </div>

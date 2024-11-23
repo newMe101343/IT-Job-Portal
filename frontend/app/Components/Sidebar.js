@@ -74,7 +74,7 @@ function Sidebar() {
 
     // Log out function
     const logOutClick = async () => {
-        try {z``
+        try {
             if (localStorage.getItem("accType") === "applicant") {
                 await fetch("http://localhost:5000/applicant/logout", {
                     method: "POST",
