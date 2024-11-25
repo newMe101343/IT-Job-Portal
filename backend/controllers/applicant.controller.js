@@ -3,6 +3,9 @@ const Applicant = require('../models/applicant.model');
 const bcryptjs = require('bcryptjs');
 const cloudinary = require('../config/cloudinary.config');
 const { generateAccessToken, generateRefreshToken } = require('../utils/tokens');
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+const { log } = require('console');
 
 // Generate Access and Refresh Tokens
 async function generateAccessAndRefreshToken(_id) {
@@ -21,6 +24,85 @@ async function generateAccessAndRefreshToken(_id) {
         throw new Error("Token generation failed");
     }
 }
+
+async function sendOtp(req, res) {
+    try {
+
+        const token = req.cookies?.refreshToken;
+
+        if (!token) {
+            return res.status(400).json({ message: "Refresh token is missing" });
+        }
+
+        const applicant = await Applicant.findOne({ refreshToken: token });
+
+        if (!applicant) {
+            return res.status(404).json({ message: "Applicant not found" });
+        }
+
+        const otp = crypto.randomInt(100000, 999999).toString();
+
+        applicant.otp = otp; 
+        await applicant.save();
+
+        const transporter = nodemailer.createTransport({
+            service: "Gmail", // or other email service
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+        });
+
+        await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: applicant.email,
+            subject: "Your Verification Code",
+            text: `Your OTP for verification is: ${otp}`,
+        });
+
+        return res.status(200).json({ message: "OTP sent successfully" });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+async function verifyOtp(req, res) {
+    try {
+        const token = req.cookies?.refreshToken;
+        const { otp } = req.body;
+        const otpInt = parseInt(otp, 10);
+      
+        if (!token || !otp) {
+            return res.status(400).json({ message: "Refresh token or OTP is missing" });
+        }
+
+        // Find the applicant with the refresh token
+        const applicant = await Applicant.findOne({ refreshToken: token });
+
+        if (!applicant) {
+            return res.status(404).json({ message: "Applicant not found" });
+        }
+
+        console.log(applicant.otp+"  "+otp);
+        
+        // Verify OTP
+        if (applicant.otp !== otpInt) {
+            return res.status(400).json({ message: "Invalid OTP" });
+        }
+
+        applicant.isVerified = true;
+        applicant.otp = undefined; // Clear OTP after verification
+        await applicant.save();
+
+        return res.status(200).json({ message: "Verification successful" });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+
 
 // Register Applicant
 const registerApplicant = async (req, res) => {
@@ -167,7 +249,6 @@ const fetchApplicantDetails = async (req, res) => {
         }
 
         const { password, ...userDetails } = user._doc; // Exclude password from the response
-        console.log('User found:', userDetails); // Log the user details returned
 
         // Send response
         return res.status(200).json(userDetails);
@@ -342,6 +423,8 @@ module.exports = {
     updateUsername,
     deleteAccount,
     addSkill,
-    updateExperience
+    updateExperience,
+    verifyOtp,
+    sendOtp
 };
 

@@ -30,6 +30,8 @@ const Profile = () => {
     const [NewBachelors, setNewBachelors] = useState("");
     const [NewMasters, setNewMasters] = useState("");
     const [NewSkill, setNewSkill] = useState("");
+    const [NewOTP, setNewOTP] = useState("");
+    const [Reload, setReload] = useState(false);
 
 
 
@@ -350,6 +352,8 @@ const Profile = () => {
                     if (response.ok) {
                         const data = await response.json();
                         setUser(data);
+                        console.log(data);
+
                     }
                 } catch (error) {
                     console.error("Failed to fetch user details:", error);
@@ -357,7 +361,38 @@ const Profile = () => {
             };
             getUserDetails();
         }
-    }, [isLoggedIn, ShowUpdateMasters, ShowUpdateEmail, ShowAddSkill, ShowUpdateExperience, ShowUpdateGitHub, ShowUpdateLeetcode, ShowUpdateLinkedIn, ShowUpdateStackOverflow, ShowUpdateTwitter, ShowUpdateUsername, ShowUpdateBachelors]);
+    }, [isLoggedIn, ShowUpdateMasters, ShowUpdateEmail, ShowAddSkill, ShowUpdateExperience, ShowUpdateGitHub, ShowUpdateLeetcode, ShowUpdateLinkedIn, ShowUpdateStackOverflow, ShowUpdateTwitter, ShowUpdateUsername, ShowUpdateBachelors, Reload]);
+
+    async function sendOtp() {
+        const response = await fetch('http://localhost:5000/applicant/sendOTP', {
+            method: 'POST',
+            credentials: "include"
+        });
+        console.log(response);
+        if (response.ok) {
+            toast("OTP sent");
+        }
+
+    }
+
+    async function verifyOtp() {
+        const response = await fetch('http://localhost:5000/applicant/verifyOTP', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                otp: NewOTP
+            })
+        });
+        console.log(response);
+        if (response.ok) {
+            toast.success('Email Verified');
+            setNewOTP("");
+            setReload(true);
+        }
+    }
 
     return (
         <div>
@@ -394,7 +429,7 @@ const Profile = () => {
                         </div>
 
                         {/*Password */}
-                        <div className="bg-gray-200 dark:bg-gray-900 p-4  pb-3 mx-8 rounded-b-md  flex space-x-4">
+                        <div className="bg-gray-200 dark:bg-gray-900 p-4  pb-3 mx-8 flex space-x-4">
                             <p className="w-32 mt-1 font-semibold">Password</p>
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             <input type="password" value={NewPassword} onChange={(e) => { setNewPassword(e.target.value) }} className="rounded-md text-black  bg-white dark:bg-slate-300 pl-2" />
@@ -402,6 +437,26 @@ const Profile = () => {
                                 Update
                             </button>
 
+
+                        </div>
+
+                        <div className="bg-gray-200 dark:bg-gray-900 p-4  pb-3 mx-8 rounded-b-md  flex space-x-4">
+                            <p className="w-32 mt-1 font-semibold">Account Status</p>
+                            <div className="w-[1px] h-9 bg-gray-400"></div>
+                            {user.isVerified && <strong>Verified</strong>}
+                            {!user.isVerified &&
+
+                                <input type="password" value={NewOTP} onChange={(e) => { setNewOTP(e.target.value) }} className="rounded-md text-black  bg-white dark:bg-slate-300 pl-2" />}
+                            {!user.isVerified &&
+                                <button onClick={verifyOtp} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">
+                                    Submit
+                                </button>
+                            }
+                            {!user.isVerified &&
+                                <button onClick={sendOtp} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">
+                                    Send OTP
+                                </button>
+                            }
 
                         </div>
 
@@ -734,7 +789,7 @@ const Profile = () => {
                             <p className="mt-1">{user.techStack?.join(', ')}</p>
 
                             {ShowAddSkill && (
-                                <select className="text-black" onChange={(e)=> setNewSkill(e.target.value)}>
+                                <select className="text-black" onChange={(e) => setNewSkill(e.target.value)}>
                                     <option value="" >Select a Skill</option>
                                     <option value="JavaScript">JavaScript</option>
                                     <option value="Java">Java</option>

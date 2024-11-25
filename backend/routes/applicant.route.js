@@ -12,6 +12,8 @@ const {
     addSkill,
     updateDetails,
     updateExperience,
+    verifyOtp,
+    sendOtp
 } = require('../controllers/applicant.controller');
 
 router.post('/register', upload.single('profilePicture'), registerApplicant);
@@ -27,6 +29,8 @@ router.post('/updateExperience', updateExperience);
 
 router.post('/updateDetails', updateDetails);
 router.post('/addSkill', addSkill);
+router.post('/sendOTP', sendOtp);
+router.post('/verifyOTP', verifyOtp);
 
 router.post('/deleteAccount', deleteAccount);
 

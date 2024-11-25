@@ -58,9 +58,9 @@ export default function Navbar() {
                     <div className={`ml-10 absolute inset-x-0 z-20 flex-1 w-full px-6 py-4 transition-all duration-300 ease-in-out bg-black dark:bg-black lg:mt-0 lg:p-0 lg:top-0 lg:relative lg:bg-transparent lg:w-auto lg:opacity-100 lg:translate-x-0 lg:flex lg:items-center lg:justify-around ${isOpen ? 'translate-x-0 opacity-100' : 'opacity-0 -translate-x-full'}`}>
                         <div className="flex flex-col font-semibold text-white dark:text-gray-300 lg:flex t lg:px-16 lg:-mx-4 lg:flex-row lg:items-center">
                             <Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-7">Home</Link>
-                            <Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-7">About</Link>
+                            <Link href="/pages/About" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-7">About</Link>
                             <Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-7">Dashboard</Link>
-                            <Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-7">Jobs</Link>
+                            <Link href="/" className="mt-2 transition-colors duration-300 transform lg:mt-0 lg:mx-7">Contact Us</Link>
 
                             {/* Conditionally render login/logout links based on 'isLoggedIn' */}
                             {!isLoggedIn &&

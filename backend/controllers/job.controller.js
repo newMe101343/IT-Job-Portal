@@ -2,52 +2,44 @@ const express = require("express");
 const router = express.Router();
 const Job = require("../models/job.model");
 const HR = require("../models/hr.model");
-const Applicant = require("../models/applicant.model");
+const Applicant = require("../models/applicant.model")
 
-//create Job post
+
 const createJobPost = async (req, res) => {
     try {
-        let { title, description, requirements, techStack, requiredExperience, degree } = req.body;
+        const refreshToken = req.cookies?.refreshToken;
 
-        // Check if all required fields are provided
-        if (!title || !description || !requirements || !techStack || !requiredExperience || !degree) {
-            return res.status(400).json({ message: "All fields are required" });
+        if (!refreshToken) {
+            return res.status(401).json({ message: "Unauthorized: No token provided" });
         }
 
-        const token = req.cookies?.refreshToken;
-        const hr = await HR.findOne({ refreshToken: token });
+        const hr = await HR.findOne({ refreshToken });
 
-        // Check if HR is found
         if (!hr) {
-            return res.status(404).json({ message: "No HR signed-in found" });
+            return res.status(404).json({ message: "HR not found" });
         }
 
-        // Create a new Job posting
+        const { title, description, requirements, techStack, requiredExperience } = req.body;
+
         const newJob = await Job.create({
             title,
             description,
             requirements,
             techStack,
             requiredExperience,
-            degree,
-            hrId: hr._id,
+            hrId: hr._id, // Link the job to HR
         });
 
-        await newJob.save();
-
-        // Add the new Job posting to HR's Job postings
         hr.jobPostings.push(newJob._id);
         await hr.save();
 
-        // Send the successful response and stop further code execution
         return res.status(201).json({ message: "Job posted successfully", newJob });
     } catch (error) {
-        console.log(error.message);
-
-        // Send error response in case of failure
-        return res.status(500).json({ error: error.message });
+        console.error(error.message);
+        return res.status(500).json({ message: "Error creating job post", error: error.message });
     }
 };
+
 
 
 // delete Job pasting
@@ -63,7 +55,6 @@ const deleteJobPost = async (req, res) => {
         }
 
         const token = req.cookies?.refreshToken;
-        console.log(token);
 
         const hr = await HR.findOne({ refreshToken: token })
 
@@ -183,6 +174,7 @@ const getJobsByHR = async (req, res) => {
 const applyJob = async (req, res) => {
     try {
         const jobId = req.params.id;
+        
         if (!jobId) {
             return res.status(404).json({ message: "Job ID is required" });
         }
@@ -201,6 +193,7 @@ const applyJob = async (req, res) => {
         if (!job) {
             return res.status(404).json({ message: "Job not found" });
         }
+        
 
         // Check if the applicant has already applied for the job
         if (applicant.appliedJobs.includes(jobId)) {
@@ -293,6 +286,8 @@ const getAllAppliedApplicants = async (req, res) => {
 }
 
 
+const nodemailer = require('nodemailer');
+
 const approveOrRejectApplicant = async (req, res) => {
     try {
         const { jobId, applicantId } = req.params;
@@ -316,32 +311,61 @@ const approveOrRejectApplicant = async (req, res) => {
             return res.status(400).json({ message: "Applicant has not applied for this job" });
         }
 
-        const token = req.cookies?.refreshToken
-        const hr = await HR.findOne({ refreshToken: token })
+        const token = req.cookies?.refreshToken;
+        const hr = await HR.findOne({ refreshToken: token });
         if (!hr) {
-            return res.status(404).json({ message: "Not authenticated" })
+            return res.status(404).json({ message: "Not authenticated" });
         }
 
         if (hr._id.toString() !== hr._id.toString()) {
-            return res.status(401).json({ message: "Unauthorized request" })
+            return res.status(401).json({ message: "Unauthorized request" });
         }
 
+        const transporter = nodemailer.createTransport({
+            service: 'gmail', 
+            auth: {
+                user: process.env.EMAIL_USER, 
+                pass: process.env.EMAIL_PASS, 
+            },
+        });
+
         if (action === "approve") {
-            // Approve: Add the applicant to approvedApplicants
             job.approvedApplicants = job.approvedApplicants || [];
             job.approvedApplicants.push(applicantId);
 
-            // Remove the applicant from the job's applicants list
             job.applicants = job.applicants.filter(id => id.toString() !== applicantId);
             await job.save();
 
-            return res.status(200).json({ message: "Applicant approved successfully" });
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: applicant.email, 
+                subject: 'Application Approved',
+                text: `Dear ${applicant.name},\n\nCongratulations! Your application for the position "${job.title}" has been approved.\n Co-ordinate with ${hr.email} for further details. \nBest regards,\nThe Team`,
+            };
+
+            await transporter.sendMail(mailOptions);
+
+            return res.status(200).json({ message: "Applicant approved successfully and email sent" });
         } else if (action === "reject") {
             // Reject: Remove the applicant from the job's applicants list
             job.applicants = job.applicants.filter(id => id.toString() !== applicantId);
             await job.save();
 
-            return res.status(200).json({ message: "Applicant rejected successfully" });
+            // Remove the job from the applicant's appliedJobs list
+            applicant.appliedJobs = applicant.appliedJobs.filter(job => job.toString() !== jobId);
+            await applicant.save();
+
+            // Send rejection email
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: applicant.email,
+                subject: 'Application Status',
+                text: `Dear ${applicant.name},\n\nThank you for taking the time to apply for the position "${job.title}". After careful consideration, we regret to inform you that we have chosen to proceed with other candidates at this time.\n\nWe truly appreciate your interest in joining our team and encourage you to apply for future opportunities that match your skills and interests. We wish you all the best in your job search and future endeavors.\n\nBest regards,\nThe Team`,
+            };
+
+            await transporter.sendMail(mailOptions);
+
+            return res.status(200).json({ message: "Applicant rejected successfully and email sent" });
         } else {
             return res.status(400).json({ message: "Invalid action. Use 'approve' or 'reject'" });
         }
@@ -351,29 +375,105 @@ const approveOrRejectApplicant = async (req, res) => {
     }
 };
 
-// getAllEligibleJobs
+
+
+
 const getEligibleJobs = async (req, res) => {
     try {
+      const token = req.cookies?.refreshToken;
+      const applicant = await Applicant.findOne({ refreshToken: token });
+  
+      if (!applicant) {
+        return res.status(404).json({ message: "Applicant not found" });
+      }
+  
+      const appliedJobIds = applicant.appliedJobs.map((job) => job.toString());  // Map to an array of job IDs as strings
+  
+      // Fetch eligible jobs along with HR information (populating hrId)
+      const eligibleJobs = await Job.find({
+        requiredExperience: { $lte: applicant.experience },
+        techStack: { $in: applicant.techStack },
+        requirements: { $regex: new RegExp(applicant.bachelors, "i") }, // Case-insensitive match for requirements
+        _id: { $nin: appliedJobIds }  // Exclude jobs that the applicant has already applied to
+      })
+        .populate('hrId')  // Populate the HR info from the HR collection
+        .exec();
+  
+      // Return both jobs and HR info
+      res.status(200).json({ eligibleJobs });
+    } catch (error) {
+      console.error("Error fetching eligible jobs:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
+  
+  
+  //applied jobs
+
+  const getJobsAppliedByApplicant = async (req, res) => {
+    try {
         const token = req.cookies?.refreshToken;
-        const applicant = await Applicant.findOne({ refreshToken: token });
+        if (!token) {
+            return res.status(401).json({ message: "Not authenticated" });
+        }
+
+        const applicant = await Applicant.findOne({ refreshToken: token }).populate({
+            path: "appliedJobs", // Populate applied jobs
+            select: "title description requirements techStack requiredExperience hrId",
+            populate: {
+                path: "hrId", // Populate HR details for each job
+                select: "company_category company"
+            }
+        });
 
         if (!applicant) {
             return res.status(404).json({ message: "Applicant not found" });
         }
 
-        // Fetch jobs that match the applicant's qualifications
-        const eligibleJobs = await Job.find({
-            requiredExperience: { $lte: applicant.experience },
-            techStack: { $all: applicant.techStack },
-            degree: { $regex: new RegExp(applicant.degree, "i") }, // Case-insensitive match
-        });
+        const jobs = applicant.appliedJobs;
 
-        res.status(200).json({ eligibleJobs });
+        
+        
+        res.status(200).json({ jobs });
     } catch (error) {
-        // console.error("Error fetching eligible jobs:", error);
-        res.status(500).json({ message: "Server error" });
+        console.error("Error fetching jobs applied by applicant:", error);
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 };
+
+//check job status
+const checkJobStatus = async (req, res) => {
+    try {
+     
+      const { id } = req.params;
+      const applicantToken = req.cookies?.refreshToken;
+  
+      if (!applicantToken) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+  
+      const applicant = await Applicant.findOne({ refreshToken: applicantToken });
+      if (!applicant) {
+        return res.status(404).json({ message: "Applicant not found" });
+      }
+  
+      const job = await Job.findById(id).populate("approvedApplicants", "name email");
+  
+      if (!job) {
+        return res.status(404).json({ message: "Job not found" });
+      }
+  
+      const isApproved = job.approvedApplicants.some(
+        (app) => app._id.toString() === applicant._id.toString()
+      );
+  
+      res.status(200).json({ status: isApproved ? "Approved" : "Pending" });
+    } catch (error) {
+      console.error("Error checking job status:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
+  
 
 module.exports = {
     createJobPost,
@@ -387,4 +487,7 @@ module.exports = {
     getAllAppliedApplicants,
     approveOrRejectApplicant,
     getEligibleJobs,
+    getAllAppliedApplicants,
+    getJobsAppliedByApplicant,
+    checkJobStatus
 }
