@@ -320,19 +320,7 @@ const Profile = () => {
         }
 
         else {
-            const response = await fetch("http://localhost:5000/applicant/addSkill", {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify({ newSkill: NewSkill }),
-            });
-            if (response.ok) {
-                toast.success("Skill Added");
-                setNewSkill("");
-                setShowAddSkill(false);
-            }
+            router.push(`/pages/test-skill/${NewSkill}`);
         }
     }
 
@@ -372,6 +360,9 @@ const Profile = () => {
         if (response.ok) {
             toast("OTP sent");
         }
+        if (!response.ok) {
+            toast.error("OTP not sent");
+        }
 
     }
 
@@ -389,6 +380,11 @@ const Profile = () => {
         console.log(response);
         if (response.ok) {
             toast.success('Email Verified');
+            setNewOTP("");
+            setReload(true);
+        }
+        if (!response.ok) {
+            toast.warning('Something went wrong');
             setNewOTP("");
             setReload(true);
         }
@@ -790,23 +786,40 @@ const Profile = () => {
 
                             {ShowAddSkill && (
                                 <select className="text-black" onChange={(e) => setNewSkill(e.target.value)}>
-                                    <option value="" >Select a Skill</option>
-                                    <option value="JavaScript">JavaScript</option>
-                                    <option value="Java">Java</option>
-                                    <option value="Python">Python</option>
-                                    <option value="C">C</option>
-                                    <option value="C++">C++</option>
-                                    <option value="C#">C#</option>
-                                    <option value="PHP">PHP</option>
-                                    <option value="Ruby">Ruby</option>
-                                    <option value="Go">Go</option>
-                                    <option value="Swift">Swift</option>
-                                    <option value="Kotlin">Kotlin</option>
-                                    <option value="Rust">Rust</option>
-                                    <option value="TypeScript">TypeScript</option>
-                                    <option value="Ruby on Rails">Ruby on Rails</option>
-                                    <option value="SQL">SQL</option>
-                                </select>
+                                <option value="">Select a Skill</option>
+                                <option value="Angular">Angular</option>
+                                <option value="C">C</option>
+                                <option value="CPP">C++</option>
+                                <option value="CHASH">C#</option>
+                                <option value="Cassandra">Cassandra</option>
+                                <option value="CI/CD">CI/CD</option>
+                                <option value="Django">Django</option>
+                                <option value="Express.js">Express.js</option>
+                                <option value="Firebase">Firebase</option>
+                                <option value="Flask">Flask</option>
+                                <option value="Git">Git</option>
+                                <option value="GitHub">GitHub</option>
+                                <option value="Java">Java</option>
+                                <option value="JavaScript">JavaScript</option>
+                                <option value="Jenkins">Jenkins</option>
+                                <option value="Kotlin">Kotlin</option>
+                                <option value="MongoDB">MongoDB</option>
+                                <option value="MySQL">MySQL</option>
+                                <option value="Next.js">Next.js</option>
+                                <option value="Node.js">Node.js</option>
+                                <option value="PHP">PHP</option>
+                                <option value="PostgreSQL">PostgreSQL</option>
+                                <option value="Python">Python</option>
+                                <option value="React Native">React Native</option>
+                                <option value="React.js">React.js</option>
+                                <option value="Redis">Redis</option>
+                                <option value="Rust">Rust</option>
+                                <option value="SQL">SQL</option>
+                                <option value="Tailwind CSS">Tailwind CSS</option>
+                                <option value="TypeScript">TypeScript</option>
+                                <option value="Vue.js">Vue.js</option>
+                              </select>
+                              
 
                             )}
 

@@ -284,6 +284,7 @@ const updateEmail = async (req, res) => {
         const user = await Applicant.findOne({ refreshToken: token });
 
         user.email = newEmail;
+        user.isVerified = false;
         await user.save();
 
         return res.status(200).json({ message: 'Email updated successfully.' });
