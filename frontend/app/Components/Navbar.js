@@ -21,7 +21,6 @@ export default function Navbar() {
         setIsLoading(false);
     }, [setIsLoggedIn]);
 
-    if (isLoading) return null;
 
     return (
         <nav className="bg-slate-950 shadow dark:bg-black fixed top-0 left-0 right-0 z-50">

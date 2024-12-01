@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useUserContext } from "@/app/Contexts/userContext";
 import Sidebar from "@/app/Components/Sidebar";
-import { ToastContainer, toast } from "react-toastify";
+import { CloseButton, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 
@@ -49,6 +49,7 @@ const Profile = () => {
     const [ShowUpdateExperience, setShowUpdateExperience] = useState(false);
     const [ShowUpdateBachelors, setShowUpdateBachelors] = useState(false);
     const [ShowUpdateMasters, setShowUpdateMasters] = useState(false);
+    const [ShowUpdateAccStatus, setShowUpdateAccStatus] = useState(false);
     const [ShowAddSkill, setShowAddSkill] = useState(false);
 
 
@@ -352,13 +353,14 @@ const Profile = () => {
     }, [isLoggedIn, ShowUpdateMasters, ShowUpdateEmail, ShowAddSkill, ShowUpdateExperience, ShowUpdateGitHub, ShowUpdateLeetcode, ShowUpdateLinkedIn, ShowUpdateStackOverflow, ShowUpdateTwitter, ShowUpdateUsername, ShowUpdateBachelors, Reload]);
 
     async function sendOtp() {
+        setShowUpdateAccStatus(true);
         const response = await fetch('http://localhost:5000/applicant/sendOTP', {
             method: 'POST',
             credentials: "include"
         });
         console.log(response);
         if (response.ok) {
-            toast("OTP sent");
+            toast.success(`OTP sent to ${user.email}`);
         }
         if (!response.ok) {
             toast.error("OTP not sent");
@@ -367,6 +369,7 @@ const Profile = () => {
     }
 
     async function verifyOtp() {
+        setShowUpdateAccStatus(false)
         const response = await fetch('http://localhost:5000/applicant/verifyOTP', {
             method: 'POST',
             headers: {
@@ -384,7 +387,7 @@ const Profile = () => {
             setReload(true);
         }
         if (!response.ok) {
-            toast.warning('Something went wrong');
+            toast.error('Incorrect OTP');
             setNewOTP("");
             setReload(true);
         }
@@ -436,23 +439,25 @@ const Profile = () => {
 
                         </div>
 
+                        {/* Acc Status */}
                         <div className="bg-gray-200 dark:bg-gray-900 p-4  pb-3 mx-8 rounded-b-md  flex space-x-4">
                             <p className="w-32 mt-1 font-semibold">Account Status</p>
                             <div className="w-[1px] h-9 bg-gray-400"></div>
                             {user.isVerified && <strong>Verified</strong>}
-                            {!user.isVerified &&
+                            {!user.isVerified && !ShowUpdateAccStatus && <strong className="mt-1">Not Verified</strong>}
+                            {!user.isVerified &&  !ShowUpdateAccStatus &&  <button className="p-1 text-sm bg-slate-800 px-3 rounded-md" onClick={()=>{sendOtp()}}>Verify</button>}
 
-                                <input type="password" value={NewOTP} onChange={(e) => { setNewOTP(e.target.value) }} className="rounded-md text-black  bg-white dark:bg-slate-300 pl-2" />}
-                            {!user.isVerified &&
+                               { ShowUpdateAccStatus && 
+                                <div>
+                                    
+                                <input type="password" placeholder="OTP" value={NewOTP} onChange={(e) => { setNewOTP(e.target.value) }} className="rounded-md text-black  bg-white dark:bg-slate-300 pl-2 h-8 mr-2" />
+                            
                                 <button onClick={verifyOtp} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">
                                     Submit
                                 </button>
-                            }
-                            {!user.isVerified &&
-                                <button onClick={sendOtp} className="bg-gray-400 dark:bg-gray-800  rounded-md p-2 text-sm">
-                                    Send OTP
-                                </button>
-                            }
+                            
+                                </div>
+                                }
 
                         </div>
 
@@ -839,7 +844,7 @@ const Profile = () => {
                         </div>
 
 
-                        <button onClick={() => setShowPopup(true)} className="border-2 mt-2 p-2 ml-10 rounded-md dark:bg-black border-red-700 text-red-600 mb-10 hover:bg-red-700 hover:text-white">Delete Account</button>
+                        <button onClick={() => setShowPopup(true)} className="mt-2 p-2 ml-10  bg-red-500 text-white rounded hover:bg-red-600 mb-10">Delete Account</button>
 
                         {ShowPopup && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                             <div className="bg-white rounded-lg shadow-lg p-6 w-96">
