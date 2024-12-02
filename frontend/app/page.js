@@ -13,10 +13,18 @@ export default function Home() {
   const { isLoggedIn, setIsLoggedIn } = useUserContext();
   const [loading, setLoading] = useState(true);
 
+  const phrases = ["Registered. Verified. Hired."];  
+  const [displayText, setDisplayText] = useState(""); 
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0); 
+  const [isErasing, setIsErasing] = useState(false); 
+  const [charIndex, setCharIndex] = useState(0); 
+  const [isTypingPaused, setIsTypingPaused] = useState(false); 
+
+
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (event.ctrlKey && event.shiftKey && event.key === "A") {
-        router.push("/pages/admin"); 
+        router.push("/pages/admin");
       }
     };
 
@@ -26,6 +34,7 @@ export default function Home() {
     };
   }, [router]);
 
+ 
   useEffect(() => {
     if (loading) {
       setLoading(false);
@@ -77,6 +86,37 @@ export default function Home() {
     }
   }, [isLoggedIn, loading, router]);
 
+  useEffect(() => {
+    if (isTypingPaused) {
+      const pauseTimeout = setTimeout(() => setIsTypingPaused(false), 100); 
+      return () => clearTimeout(pauseTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      if (isErasing) {
+        if (charIndex > 0) {
+          setDisplayText((prev) => prev.slice(0, -1)); 
+          setCharIndex((prev) => prev - 1); 
+        } else {
+          setIsErasing(false);
+          setIsTypingPaused(true); 
+          setDisplayText("");  
+          setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);  
+        }
+      } else {
+        if (charIndex < phrases[currentPhraseIndex].length) {
+          setDisplayText((prev) => prev + phrases[currentPhraseIndex][charIndex]); 
+          setCharIndex((prev) => prev + 1); 
+        } else {
+          setIsErasing(true); 
+          setIsTypingPaused(true); 
+        }
+      }
+    }, isErasing ? 200 : 200); 
+
+    return () => clearTimeout(timeout);
+  }, [charIndex, isErasing, currentPhraseIndex, isTypingPaused, phrases]);
+
   return (
     <div>
       {!loading && isLoggedIn && (
@@ -84,8 +124,15 @@ export default function Home() {
           <Sidebar />
 
           <ToastContainer theme="dark"></ToastContainer>
+
           <div className="ml-64 pl-4 pt-4">
-            <p>HOME</p>
+            <div className="text-3xl h-16 font-serif text-center font-bold">
+              <p>{displayText}</p>
+            </div>
+              <hr className=" "/>
+              
+            <div className="p-3"></div>
+
           </div>
         </>
       )}

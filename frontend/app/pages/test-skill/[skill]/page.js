@@ -19,33 +19,41 @@ function TestSkill() {
   useEffect(() => {
     if (!skill) return;
 
-    // Fetch the questions
     const fetchQuestions = async () => {
-      const response = await fetch(`http://localhost:5000/skill/${skill}/questions`);
-      const data = await response.json();
+      try {
+        const response = await fetch(`http://localhost:5000/skill/${skill}/questions`);
+        const data = await response.json();
 
-      if (data.questions) {
-        setQuestions(data.questions);
-      } else {
-        toast.error("Failed to fetch questions.");
+        if (data.questions) {
+          setQuestions(data.questions);
+        } else {
+          toast.error("Failed to fetch questions.");
+        }
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+        toast.error("An error occurred while fetching questions.");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchQuestions();
+  }, [skill]); 
 
-    // Timer logic
+  useEffect(() => {
+
     const timer = setInterval(() => {
       if (timeLeft > 0 && isTimerRunning) {
-        setTimeLeft(timeLeft - 1);
+        setTimeLeft((prevTime) => prevTime - 1);
       } else {
         clearInterval(timer);
-        handleSubmitQuiz(); // Automatically submit when time is up
+        handleSubmitQuiz(); 
       }
     }, 1000);
 
-    return () => clearInterval(timer); // Cleanup the interval on component unmount
-  }, [skill, timeLeft, isTimerRunning]);
+    return () => clearInterval(timer); 
+  }, [timeLeft, isTimerRunning]); 
+
 
   const handleAnswerChange = (index, answer) => {
     setSelectedAnswers((prevAnswers) => ({
@@ -57,14 +65,12 @@ function TestSkill() {
   const handleSubmitQuiz = async () => {
     let correctAnswersCount = 0;
 
-    // Count the correct answers
     questions.forEach((question, index) => {
       if (selectedAnswers[index] === question.correctAnswer) {
         correctAnswersCount++;
       }
     });
 
-    // If user passed, add the skill to their tech stack
     if (correctAnswersCount >= 3) {
       const response = await fetch("http://localhost:5000/applicant/addSkill", {
         method: "POST",

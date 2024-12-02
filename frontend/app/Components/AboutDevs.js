@@ -6,7 +6,7 @@ const AboutDevs = () => {
         <div>
 
             <div className="flex  space-x-48 pt-12 pl-48 pb-10 mb-12">
-                <div className='pt-12  bg-slate-100 pb-6 w-96 rounded-md shadow-xl flex flex-col items-center'>
+                <div className='pt-12  bg-slate-100 dark:bg-slate-300 pb-6 w-96 rounded-md shadow-xl flex flex-col items-center'>
                     <Image
                         alt="none"
                         src="/Darshan.jpg"
@@ -20,7 +20,7 @@ const AboutDevs = () => {
                     </p>
                 </div>
 
-                <div className='pt-12  bg-slate-100 pb-6 w-96 rounded-md shadow-xl  flex flex-col items-center'>
+                <div className='pt-12  bg-slate-100 dark:bg-slate-300 pb-6 w-96 rounded-md shadow-xl  flex flex-col items-center'>
                     <Image
                         alt="none"
                         src="/Arshal.jpg"

@@ -518,21 +518,34 @@ const Profile = () => {
                                             <div className="space-y-4">
                                                 <p className="text-red-600 dark:text-red-400 font-semibold">Not Verified</p>
                                                 {ShowUpdateAccStatus ? (
-                                                    <div className="flex space-x-4">
-                                                        <input
-                                                            type="password"
-                                                            placeholder="Enter OTP"
-                                                            value={NewOTP}
-                                                            onChange={(e) => setNewOTP(e.target.value)}
-                                                            className="flex-1 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-gray-50 dark:bg-gray-700"
-                                                        />
+                                                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                                                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-96">
+                                                        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                                                            Enter OTP
+                                                        </h2>
+                                                        <div className="flex space-x-4">
+                                                            <input
+                                                                type="password"
+                                                                placeholder="Enter OTP"
+                                                                value={NewOTP}
+                                                                onChange={(e) => setNewOTP(e.target.value)}
+                                                                className="flex-1 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-gray-50 dark:bg-gray-700"
+                                                            />
+                                                            <button
+                                                                onClick={verifyOtp}
+                                                                className="bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded-lg"
+                                                            >
+                                                                Submit
+                                                            </button>
+                                                        </div>
                                                         <button
-                                                            onClick={verifyOtp}
-                                                            className="bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded-lg"
+                                                            onClick={() => setShowUpdateAccStatus(false)}
+                                                            className="mt-4 bg-red-600 dark:bg-red-500 text-white px-4 py-2 rounded-lg"
                                                         >
-                                                            Submit
+                                                            Close
                                                         </button>
                                                     </div>
+                                                </div>
                                                 ) : (
                                                     <button
                                                         onClick={sendOtp}

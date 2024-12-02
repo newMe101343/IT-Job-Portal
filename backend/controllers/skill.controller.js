@@ -28,23 +28,32 @@ async function addQuestion(req, res) {
 // Get questions for a specific skill
 async function getQuestions(req, res) {
     try {
-        const { skillName } = req.params;  // The skill name comes from the route parameter
-
+        const { skillName } = req.params; 
         if (!skillName) {
             return res.status(400).json({ message: "Skill name is required." });
         }
-
         const skill = await Skill.findOne({ skillName });
-
+    
         if (!skill) {
             return res.status(404).json({ message: "Skill not found." });
         }
-
-        res.status(200).json({ questions: skill.questions }); // Return the list of questions for the skill
+    
+        const questions = skill.questions;
+    
+        if (!Array.isArray(questions) || questions.length === 0) {
+            return res.status(404).json({ message: "No questions available for this skill." });
+        }
+    
+        const randomQuestions = questions
+            .sort(() => 0.5 - Math.random()) 
+            .slice(0, 5); 
+    
+        res.status(200).json({ questions: randomQuestions });
     } catch (error) {
         console.error("Error fetching questions:", error);
         res.status(500).json({ message: "An error occurred while fetching the questions.", error });
     }
+    
 }
 
 module.exports = {
