@@ -83,7 +83,7 @@ function GetAllApplicants() {
 
 
   return (
-    <>
+    <> 
       <Sidebar />
       <ToastContainer></ToastContainer>
       <div className="ml-64 p-3">

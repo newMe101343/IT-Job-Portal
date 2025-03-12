@@ -5,6 +5,7 @@ const connectDB = require('./db/connect');
 const applicant = require('./routes/applicant.route'); 
 const HR = require('./routes/hr.route')
 const job = require('./routes/job.route');
+const skill = require('./routes/skill.route');
 const multer = require('multer');
 const upload = multer(); 
 
@@ -33,6 +34,7 @@ connectDB();
 app.use('/applicant', applicant);
 app.use('/HR', HR);
 app.use('/job', job);
+app.use('/skill', skill);
 
 app.get('/', (req, res) => {
     res.json({ message: 'Backend connected successfully' });

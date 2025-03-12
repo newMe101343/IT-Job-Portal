@@ -77,22 +77,39 @@ function JobsListing() {
   }
 
   const techStackOptions = [
-    { value: 'JavaScript', label: 'JavaScript' },
-    { value: 'Java', label: 'Java' },
-    { value: 'Python', label: 'Python' },
+    { value: 'Angular', label: 'Angular' },
     { value: 'C', label: 'C' },
-    { value: 'C++', label: 'C++' },
-    { value: 'C#', label: 'C#' },
-    { value: 'PHP', label: 'PHP' },
-    { value: 'Ruby', label: 'Ruby' },
-    { value: 'Go', label: 'Go' },
-    { value: 'Swift', label: 'Swift' },
+    { value: 'CPP', label: 'C++' },
+    { value: 'CHASH', label: 'C#' },
+    { value: 'Cassandra', label: 'Cassandra' },
+    { value: 'CI/CD', label: 'CI/CD' },
+    { value: 'Django', label: 'Django' },
+    { value: 'Express.js', label: 'Express.js' },
+    { value: 'Firebase', label: 'Firebase' },
+    { value: 'Flask', label: 'Flask' },
+    { value: 'Git', label: 'Git' },
+    { value: 'GitHub', label: 'GitHub' },
+    { value: 'Java', label: 'Java' },
+    { value: 'JavaScript', label: 'JavaScript' },
+    { value: 'Jenkins', label: 'Jenkins' },
     { value: 'Kotlin', label: 'Kotlin' },
+    { value: 'MongoDB', label: 'MongoDB' },
+    { value: 'MySQL', label: 'MySQL' },
+    { value: 'Next.js', label: 'Next.js' },
+    { value: 'Node.js', label: 'Node.js' },
+    { value: 'PHP', label: 'PHP' },
+    { value: 'PostgreSQL', label: 'PostgreSQL' },
+    { value: 'Python', label: 'Python' },
+    { value: 'React Native', label: 'React Native' },
+    { value: 'React.js', label: 'React.js' },
+    { value: 'Redis', label: 'Redis' },
     { value: 'Rust', label: 'Rust' },
+    { value: 'SQL', label: 'SQL' },
+    { value: 'Tailwind CSS', label: 'Tailwind CSS' },
     { value: 'TypeScript', label: 'TypeScript' },
-    { value: 'Ruby on Rails', label: 'Ruby on Rails' },
-    { value: 'SQL', label: 'SQL' }
-  ];
+    { value: 'Vue.js', label: 'Vue.js' }
+];
+
 
   return (
     <div>

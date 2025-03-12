@@ -53,6 +53,8 @@ function Sidebar() {
                     if (response) {
                         data = await response.json();
                         if (response.ok) {
+                            console.log(data);
+                            
                             setUser(data); // Save user details
                         } else {
                             setError(data.message || "Error fetching user details");
